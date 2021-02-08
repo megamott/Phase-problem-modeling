@@ -26,6 +26,10 @@ class SphericalWave(wave.Wave):  # todo добавить апертуру
         return self.__field
 
     @property
+    def area(self):
+        return self.__area
+
+    @property
     def phase(self):
         return np.angle(self.__field)
 

@@ -5,6 +5,7 @@ from src.model.waves.spherical_wave import SphericalWave
 from src.model.areas.square_area import SquareArea
 from src.model.areas.radial_area import RadialArea
 from src.model.areas.radial_aperture import RadialAperture
+from src.model.propagation.angular_spectrum import AngularSpectrum
 
 
 # todo поменять все informal interface на formal interface
@@ -23,6 +24,12 @@ ic(aperture.aperture)
 field = SphericalWave(square_area_1, focal_len, gaussian_width_param, wavelength)
 field.field *= aperture.aperture
 
-ic(field.field)
+ic(field.phase)
 
+propagation_method = AngularSpectrum()
+field_z = propagation_method.propagate_on_distance(100e-3, field)
+
+field_z_array = propagation_method.propagate_from_to(0e-3, 100e-3, 5e-3, field)
+
+print(field_z_array)
 
