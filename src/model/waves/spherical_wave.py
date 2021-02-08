@@ -45,6 +45,10 @@ class SphericalWave(wave.Wave):  # todo добавить апертуру
     def gaussian_width_param(self):
         return int(units.m2px(self.__gaussian_width_param, self.__area.get_pixel_size()))
 
+    @field.setter
+    def field(self, field):
+        self.__field = field
+
     @wavelength.setter
     def wavelength(self, wavelength):
         self.__wavelength = wavelength
