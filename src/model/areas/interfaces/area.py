@@ -1,7 +1,3 @@
 class Area:
-
-    def size(self):
-        pass
-
-    def pixel_size(self):
+    def get_coordinate_grid(self):
         pass

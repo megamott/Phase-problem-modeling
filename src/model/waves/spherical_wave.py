@@ -5,20 +5,14 @@ from src.model.waves.interface import wave
 
 class SphericalWave(wave.Wave):
 
-    def __init__(self, field: np.ndarray):
-        self.field = field
+    def __init__(self):
+        pass
 
-    @property
     def field(self):
-        return self.__field
+        pass
 
-    @property
-    def phase(self):
-        return self.__field ** 2
-
-    @field.setter
-    def field(self, field):
-        self.__field = field
+    def get_phase(self):
+        pass
 
     def get_wrapped_phase(self):
         pass
@@ -30,4 +24,10 @@ class SphericalWave(wave.Wave):
         pass
 
     def get_wavelength(self):
+        pass
+
+    def get_focal_len(self):
+        pass
+
+    def get_gaussian_width_para(self):
         pass
