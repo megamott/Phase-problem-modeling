@@ -18,6 +18,10 @@ def px2m(px, px_size_m=5.04e-6):
     return px * px_size_m
 
 
+def m2px(m, px_size_m=5.04e-6):
+    return m // px_size_m
+
+
 # В миллиметры
 def m2mm(m):
     return m * 1e+3

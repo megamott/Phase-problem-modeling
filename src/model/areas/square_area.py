@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.model.areas.interfaces import area
+from src.model.areas.interface import area
 from src.utils.math import units
 
 
@@ -17,25 +17,28 @@ class SquareArea(area.Area):
                                       units.px2m(x_grid_array, px_size_m=self.__pixel_size))
         return y_grid_array, x_grid_array
 
+    def get_pixel_size(self):
+        return self.__pixel_size
+
     @property
     def height(self):
         return self.__height
-
-    @height.setter
-    def height(self, height):
-        self.__height = height
 
     @property
     def width(self):
         return self.__width
 
-    @width.setter
-    def width(self, width):
-        self.__width = width
-
     @property
     def pixel_size(self):
         return self.__pixel_size
+
+    @height.setter
+    def height(self, height):
+        self.__height = height
+
+    @width.setter
+    def width(self, width):
+        self.__width = width
 
     @pixel_size.setter
     def pixel_size(self, pixel_size):
