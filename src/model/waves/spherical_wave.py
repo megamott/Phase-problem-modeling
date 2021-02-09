@@ -30,6 +30,9 @@ class SphericalWave(Wave):
     def get_wrapped_phase(self) -> np.ndarray:
         return self.__phase
 
+    def get_wrapped_phase_with_aperture(self, aperture: Aperture) -> np.ndarray:
+        return self.__phase * aperture.get_aperture()
+
     def get_unwrapped_phase(self) -> np.ndarray:
         return unwrap_phase(self.__phase)
 
