@@ -12,7 +12,6 @@ from src.utils.files_routine import *
 from src.utils.math.general import *
 
 # todo поменять все informal interface на formal interface
-# todo добавить у всех функций возвращаемые метдоы
 
 wavelength = 659.6e-9
 px_size = 5.04e-6
@@ -72,7 +71,7 @@ for i in np.arange(0, 3, 1):
     array_of_wavefront_radius_arrays.append(wavefront_radius_array)
     array_of_z_distances.append(z_distances_array)
 
-fig, ax = plt.subplots(figsize=[12.0, 10.0], dpi=300, facecolor='w', edgecolor='k')
+fig, ax = plt.subplots(figsize=[8.0, 6.0], dpi=300, facecolor='w', edgecolor='k')
 
 # matrix = np.array([0, 1, 2, 3])
 # m = [np.around(np.exp(-2), decimals=4), np.around(units.percent2decimal(1), decimals=4),

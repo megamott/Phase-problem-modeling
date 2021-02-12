@@ -1,6 +1,7 @@
 import numpy as np
 
 from src.model.areas.interface.aperture import Aperture
+from src.model.areas.interface.area import Area
 
 
 # интерфейс волны
@@ -40,5 +41,19 @@ class Wave:
         :param aperture: апертура (circ) для обрезания поля
         :rtype: Aperture
         :return: радиус волнового фронта при заданной обрезающей апертуре
+        """
+        pass
+
+    def get_wavelength(self) -> float:
+        """
+        Возвращает длину волны в метрах
+        :return:
+        """
+        pass
+
+    def get_area(self) -> Area:
+        """
+        Возвращает координатную сетку волны
+        :return:
         """
         pass

@@ -62,10 +62,16 @@ class SphericalWave(Wave):
 
         return wavefront_radius
 
+    def get_wavelength(self) -> float:
+        return self.__wavelength
+
+    def get_area(self) -> Area:
+        return self.__area
+
     @property
     def field(self) -> np.ndarray:
         """
-        Распределение поля волны на координатной сетке
+        Распределение поля волны на координатной сетке в комплексной форме
         """
         return self.__field
 
