@@ -3,6 +3,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from skimage.restoration import unwrap_phase
 
 from src.model.waves.spherical_wave import SphericalWave
+from src.model.waves.interface.wave import Wave
 from src.utils.math.general import *
 from src.utils.math import units
 
@@ -166,54 +167,39 @@ def save_phase_slices(phase, filename: str, package_name: str, unwrapped=True, g
 
 
 # сохранение графика R(z)
-def save_r_z(z_propagation_distance, radius_y, focus: float, e_width_param: float, threshold: float, step: float,
-             size: float):
-    y = np.abs(np.array(z_propagation_distance) - units.m2mm(focus))  # теоретическое распределение R(z) - линейное
-    save_2plots(z_propagation_distance, radius_y, z_propagation_distance, y,
-                f'trz_f{int(units.m2mm(np.around(focus, decimals=3)))}_g{e_width_param}_t0,{int(units.m2mm(np.around(threshold, decimals=3)))}',
-                package_name='r(z)', dpi=300,
-                title=f'f\' = {units.m2mm(focus):.1f}mm; Шаг {units.m2mm(step)} мм; Порог {threshold:.3f}; Размер {size}',
-                line1format='-o', linewidth=1., marker1size=3.,
-                xlims=[z_propagation_distance[0], z_propagation_distance[-1]],
-                xlabel='z, мм', ylabel='R(z), мм', label1='Модель', label2='Теория')
+def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
+             matrix: np.ndarray, wave: Wave, start=None, stop=None, step=None):
+    fig, ax = plt.subplots(figsize=[8.0, 6.0], dpi=300, facecolor='w', edgecolor='k')
 
+    for z in np.arange(0, np.shape(matrix)[0], 1):
+        radius_y = array_of_wavefront_radius_arrays[z]
+        z_propagation_distance = array_of_z_distances[z]
+        theory_r_z = np.abs(np.array(z_propagation_distance) - units.m2mm(wave.get_focus()))
 
-def save_2plots(x1, y1, x2, y2, filename: str, package_name: str, **kwargs):
-    title = kwargs.get('title', '')
-    dpi = kwargs.get('dpi', 100)
-    figsize = kwargs.get('figsize', [16.0, 6.0])
-    linewidth = kwargs.get('linewidth', 1.5)
-    line1format = kwargs.get('line1format', '-')
-    line2format = kwargs.get('line2format', '-')
-    marker1size = kwargs.get('marker1size', 5.)
-    marker2size = kwargs.get('marker1size', 5.)
-    label1 = kwargs.get('label1', '')
-    label2 = kwargs.get('label2', '')
-    xmin, xmax = kwargs.get('xlims', [None, None])
-    ymin, ymax = kwargs.get('ylims', [None, None])
-    grid = kwargs.get('grid', True)
-    xlabel = kwargs.get('xlabel', 'x')
-    ylabel = kwargs.get('ylabel', 'y')
+        if z == 0:
+            ax.plot(z_propagation_distance, theory_r_z, label='Theoretical', color='k', markersize=3.)
+        ax.plot(z_propagation_distance, radius_y, '-o', label=f'size: {matrix[z]}', linewidth=1., markersize=3.)
 
-    fig = plt.figure(dpi=dpi, figsize=figsize)
+    # ax.xaxis.set_major_locator(ticker.MultipleLocator(100))
+    # ax.xaxis.set_minor_locator(ticker.MultipleLocator(20))
+    #
+    # ax.yaxis.set_major_locator(ticker.MultipleLocator(100))
+    # ax.yaxis.set_minor_locator(ticker.MultipleLocator(20))
 
-    ax = fig.gca()
-    # for i in np.arange(y1.shape[0]):
-    ax.plot(x1, y1, line1format, linewidth=linewidth, label=label1, markersize=marker1size)
-    ax.plot(x2, y2, line2format, linewidth=linewidth, label=label2, markersize=marker2size)
-    ax.set_xlim([xmin, xmax])
-    ax.set_ylim([ymin, ymax])
+    theory_r_z = np.abs(np.array(array_of_z_distances[0]) - units.m2mm(wave.get_focus()))
+    ax.set_xlim(0, 500)
+    ax.set_ylim(0, theory_r_z[-1])
 
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    plt.xlabel('Propagation distance, mm')
+    plt.ylabel('R(z), mm', )
+    plt.legend()
+    plt.title(f'f\' = {units.m2mm(np.around(wave.get_focus(), decimals=3))} mm; '
+              f'g = {wave.get_gaussian_width()}; step = {step} mm',
+              fontsize=14)
+    # plt.show()
 
-    if label1 or label2:
-        ax.legend()
-    if grid:
-        ax.grid(True)
+    ax.grid(True)
 
-    filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/{package_name}/{filename}"
+    filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/r(z)/trz_f_" \
+               f"{int(units.m2mm(np.around(wave.get_focus(), decimals=3)))}_g{wave.get_gaussian_width()}_matrix_test"
     fig.savefig(filepath)
-
-    plt.close(fig)

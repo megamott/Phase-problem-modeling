@@ -68,6 +68,12 @@ class SphericalWave(Wave):
     def get_area(self) -> Area:
         return self.__area
 
+    def get_focus(self) -> float:
+        return self.__focal_len
+
+    def get_gaussian_width(self) -> float:
+        return self.__gaussian_width_param
+
     @property
     def field(self) -> np.ndarray:
         """
