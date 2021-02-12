@@ -6,12 +6,17 @@ from src.utils.optic.field import circ
 from src.utils.math import units
 
 
+# класс апертуры, circ
 class RadialAperture(Aperture):
 
     def __init__(self, radial_area: RadialArea, aperture_diameter: float):
-        aperture_diameter = units.px2m(aperture_diameter, px_size_m=radial_area.pixel_size)
+        """
+        Создаёт круглую апертуру на основе сетки сферических координат
+        :param radial_area: сетки сферических координат
+        :param aperture_diameter: диаметр апертуры [px]
+        """
+        aperture_diameter = units.px2m(aperture_diameter, px_size_m=radial_area.pixel_size)  # [м]
         self.__aperture_diameter = aperture_diameter
-
         self.__aperture = circ(radial_area.get_coordinate_grid(), w=aperture_diameter)
 
     def get_aperture(self) -> np.ndarray:

@@ -25,10 +25,6 @@ class SquareArea(Area):
         return y_grid_array, x_grid_array
 
     def get_pixel_size(self) -> float:
-        """
-        Возвращает размер пикселя матрицы
-        :return:
-        """
         return self.__pixel_size
 
     @property
