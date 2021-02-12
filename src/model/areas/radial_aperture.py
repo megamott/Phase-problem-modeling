@@ -9,7 +9,7 @@ from src.utils.math import units
 class RadialAperture(Aperture):
 
     def __init__(self, radial_area: RadialArea, aperture_diameter: float):
-        aperture_diameter = units.px2m(aperture_diameter)
+        aperture_diameter = units.px2m(aperture_diameter, px_size_m=radial_area.pixel_size)
         self.__aperture_diameter = aperture_diameter
 
         self.__aperture = circ(radial_area.get_coordinate_grid(), w=aperture_diameter)

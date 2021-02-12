@@ -8,7 +8,7 @@ from src.utils.optic.field import *
 from src.utils.math.general import *
 
 
-# класс Сферической волны
+# класс волны со сферической аберрацией или сходящейся сферической волны
 class SphericalWave(Wave):
 
     def __init__(self, ar: Area, focal_len: float, gaussian_width_param: int, wavelength: float):
@@ -63,21 +63,21 @@ class SphericalWave(Wave):
         return wavefront_radius
 
     @property
-    def field(self):
+    def field(self) -> np.ndarray:
         """
         Распределение поля волны на координатной сетке
         """
         return self.__field
 
     @property
-    def area(self):
+    def area(self) -> Area:
         """
         Координатная сетка
         """
         return self.__area
 
     @property
-    def phase(self):
+    def phase(self) -> np.ndarray:
         """
         Распределение фазы поля
         :return:
@@ -85,7 +85,7 @@ class SphericalWave(Wave):
         return np.angle(self.__field)
 
     @property
-    def intensity(self):
+    def intensity(self) -> np.ndarray:
         """
         Распределение интенсивности поля
         :return:
@@ -93,15 +93,15 @@ class SphericalWave(Wave):
         return np.abs(self.__field) ** 2
 
     @property
-    def wavelength(self):
+    def wavelength(self) -> float:
         return self.__wavelength
 
     @property
-    def focal_len(self):
+    def focal_len(self) -> float:
         return self.__focal_len
 
     @property
-    def gaussian_width_param(self):
+    def gaussian_width_param(self) -> float:
         return self.__gaussian_width_param
 
     @field.setter
