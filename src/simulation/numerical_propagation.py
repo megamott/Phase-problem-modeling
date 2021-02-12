@@ -16,8 +16,8 @@ from src.utils.math.general import *
 
 wavelength = 659.6e-9
 px_size = 5.04e-6
-focal_len = 200e-3
-gaussian_width_param = 250
+focal_len = 50e-3
+gaussian_width_param = 600
 
 # Вариации порога
 thresholds = [np.exp(-2), units.percent2decimal(1), units.percent2decimal(0.5)]
@@ -33,6 +33,7 @@ matrix = np.array([256, 512, 1024])
 array_of_z_distances = []
 
 for i in np.arange(0, 3, 1):
+    ic(matrix[i])
     matrix_size = matrix[i]
     square_area_1 = SquareArea(matrix_size, matrix_size, pixel_size=px_size)
 
@@ -53,8 +54,8 @@ for i in np.arange(0, 3, 1):
         # преобразование апертуры
         aperture = RadialAperture(radial_area_1, widest_diameter(field_z.intensity, thresholds[t_num]))
 
-        up = field_z.get_unwrapped_phase_with_aperture(aperture)
-        wp = field_z.get_wrapped_phase_with_aperture(aperture)
+        up = field_z.get_unwrapped_phase(aperture=aperture)
+        wp = field_z.get_wrapped_phase(aperture=aperture)
         r = field_z.get_wavefront_radius(aperture)
 
         wavefront_radius_array.append(r)
@@ -65,10 +66,13 @@ for i in np.arange(0, 3, 1):
         #                       package_name=f'intensity_f{int(units.m2mm(np.around(field_z.focal_len, decimals=3)))}_g{gaussian_width_param}_s{field_z.area.get_coordinate_grid()[0].shape[0]}',)
 
         ic(r)
+        # ic(np.max(field_z.intensity) - np.min(field_z.intensity))
+
+    ic()
     array_of_wavefront_radius_arrays.append(wavefront_radius_array)
     array_of_z_distances.append(z_distances_array)
 
-fig, ax = plt.subplots(figsize=[8.0, 6.0], dpi=300, facecolor='w', edgecolor='k')
+fig, ax = plt.subplots(figsize=[12.0, 10.0], dpi=300, facecolor='w', edgecolor='k')
 
 # matrix = np.array([0, 1, 2, 3])
 # m = [np.around(np.exp(-2), decimals=4), np.around(units.percent2decimal(1), decimals=4),
@@ -103,5 +107,5 @@ plt.title(f'f\' = {units.m2mm(np.around(focal_len, decimals=3))} mm; g = {gaussi
 
 ax.grid(True)
 
-filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/r(z)/trz_f_{int(units.m2mm(np.around(focal_len, decimals=3)))}_g{gaussian_width_param}_matrix"
+filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/r(z)/trz_f_{int(units.m2mm(np.around(focal_len, decimals=3)))}_g{gaussian_width_param}_matrix_test"
 fig.savefig(filepath)

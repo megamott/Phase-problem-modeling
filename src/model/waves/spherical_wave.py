@@ -1,19 +1,27 @@
-import numpy as np
 from skimage.restoration import unwrap_phase
 
 from src.utils.math import units
 from src.model.waves.interface.wave import Wave
 from src.model.areas.interface.aperture import Aperture
-from src.model.areas.interface import area
+from src.model.areas.interface.area import Area
 from src.utils.optic.field import *
 from src.utils.math.general import *
 
 
+# класс Сферической волны
 class SphericalWave(Wave):
 
-    def __init__(self, ar: area.Area, focal_len: float, gaussian_width_param: int, wavelength: float):
+    def __init__(self, ar: Area, focal_len: float, gaussian_width_param: int, wavelength: float):
+        """
+        Создание распределения поля на двухмерной координатной сетке
+        :param ar: двухмерная координатная сетка расчёта распределения поля
+        :param focal_len: фокусное расстояние [м]
+        :param gaussian_width_param: ширина гауссоиды на уровне интенсивности 1/e^2 [px]
+        :param wavelength: длина волны [м]
+        """
         y_grid_array, x_grid_array = ar.get_coordinate_grid()
         radius_vector = np.sqrt(x_grid_array ** 2 + y_grid_array ** 2 + focal_len ** 2)
+        # волновой вектор
         k = 2 * np.pi / wavelength
 
         self.__gaussian_width_param = gaussian_width_param
@@ -27,24 +35,24 @@ class SphericalWave(Wave):
         self.__focal_len = focal_len
         self.__area = ar
 
-    def get_wrapped_phase(self) -> np.ndarray:
-        return self.__phase
+    def get_wrapped_phase(self, aperture=None) -> np.ndarray:
+        if aperture:
+            return self.__phase * aperture.get_aperture()
+        else:
+            return self.__phase
 
-    def get_wrapped_phase_with_aperture(self, aperture: Aperture) -> np.ndarray:
-        return self.__phase * aperture.get_aperture()
-
-    def get_unwrapped_phase(self) -> np.ndarray:
-        return unwrap_phase(self.__phase)
-
-    def get_unwrapped_phase_with_aperture(self, aperture: Aperture):
-        return unwrap_phase(self.__phase * aperture.get_aperture())
+    def get_unwrapped_phase(self, aperture=None) -> np.ndarray:
+        if aperture:
+            return unwrap_phase(self.__phase * aperture.get_aperture())
+        else:
+            return unwrap_phase(self.__phase)
 
     def get_intensity(self) -> np.ndarray:
         return self.__intensity
 
     def get_wavefront_radius(self, aperture: Aperture) -> float:
         # развернутая фаза, обрезанная апертурой
-        cut_phase = self.get_unwrapped_phase_with_aperture(aperture)
+        cut_phase = self.get_unwrapped_phase(aperture=aperture)
 
         # поиск стрелки прогиба
         saggita = units.rad2mm(calc_amplitude(cut_phase), self.__wavelength)
@@ -56,18 +64,32 @@ class SphericalWave(Wave):
 
     @property
     def field(self):
+        """
+        Распределение поля волны на координатной сетке
+        """
         return self.__field
 
     @property
     def area(self):
+        """
+        Координатная сетка
+        """
         return self.__area
 
     @property
     def phase(self):
+        """
+        Распределение фазы поля
+        :return:
+        """
         return np.angle(self.__field)
 
     @property
     def intensity(self):
+        """
+        Распределение интенсивности поля
+        :return:
+        """
         return np.abs(self.__field) ** 2
 
     @property
@@ -78,7 +100,6 @@ class SphericalWave(Wave):
     def focal_len(self):
         return self.__focal_len
 
-    # возвращает размер в пикселях
     @property
     def gaussian_width_param(self):
         return self.__gaussian_width_param

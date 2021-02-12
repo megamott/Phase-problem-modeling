@@ -181,7 +181,7 @@ def save_r_z(z_propagation_distance, radius_y, focus: float, e_width_param: floa
 def save_2plots(x1, y1, x2, y2, filename: str, package_name: str, **kwargs):
     title = kwargs.get('title', '')
     dpi = kwargs.get('dpi', 100)
-    figsize = kwargs.get('figsize', [8.0, 6.0])
+    figsize = kwargs.get('figsize', [16.0, 6.0])
     linewidth = kwargs.get('linewidth', 1.5)
     line1format = kwargs.get('line1format', '-')
     line2format = kwargs.get('line2format', '-')
