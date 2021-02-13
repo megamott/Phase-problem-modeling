@@ -2,29 +2,39 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from skimage.restoration import unwrap_phase
 
-from src.model.waves.spherical_wave import SphericalWave
+from src.model.configuration.interface.saver import Saver
 from src.model.waves.interface.wave import Wave
 from src.utils.math.general import *
 from src.utils.math import units
 
 
 # сохранение изображения неразвернутой и развернутой фаз
-def save_phase(z: float, wave: SphericalWave, unwrapped_phase: np.ndarray, phase_z, wavefront_radius: float):
-    focus = wave.focal_len
-    gaussian_width_param = wave.gaussian_width_param
-    k = 2 * np.pi / wave.wavelength
+def save_phase(z: float, wave: Wave, unwrapped_phase: np.ndarray, phase_z, wavefront_radius: float, saver: Saver):
+    focus = wave.get_focus()
+    gaussian_width_param = wave.get_gaussian_width()
+    k = 2 * np.pi / wave.get_wavelength()
     fn = f'phase_z_{int(units.m2mm(z))}mm'
     unwrapped_phase_lbl = f'[{np.min(unwrapped_phase):.2f}, {np.max(unwrapped_phase):.2f}] rad; ' \
                           f'[{np.min(unwrapped_phase) * 1e+6 / k:.1f}, {np.max(unwrapped_phase) * 1e+6 / k:.1f}] um'
     wrapped_phase_lbl = f'z: {units.m2mm(z):.1f} mm; R: {wavefront_radius:.3f} mm'
     save_phase_slices(phase_z, fn,
-                      package_name=f'phase_f{int(units.m2mm(np.around(focus, decimals=3)))}_g{gaussian_width_param}_s{wave.area.get_coordinate_grid()[0].shape[0]}',
+                      package_name=f'phase/phase_f{int(units.m2mm(np.around(focus, decimals=3)))}_'
+                                   f'g{gaussian_width_param}_'
+                                   f's{wave.get_area().get_coordinate_grid()[0].shape[0]}',
+                      saver=saver,
                       unwrapped=False, geometry_center=True, linewidth=1,
                       unwrapped_ylims=(-100, 100), unwrapped_phase_lbl=unwrapped_phase_lbl,
                       wrapped_phase_lbl=wrapped_phase_lbl)
 
 
-def save_intensity_slices(intensity, filename: str, package_name: str, geometry_center=False, **kwargs):
+def save_intensity(z: float, wave: Wave, saver: Saver):
+    save_intensity_slices(wave.get_intensity(), filename=f'intensity_z_{int(units.m2mm(z))}mm',
+                          package_name=f'intensity/intensity_f{int(units.m2mm(np.around(wave.get_focus(), decimals=3)))}_'
+                                       f'g{wave.get_gaussian_width()}_'
+                                       f's{wave.get_area().get_coordinate_grid()[0].shape[0]}', saver=saver)
+
+
+def save_intensity_slices(intensity, filename: str, package_name: str, saver: Saver, geometry_center=False, **kwargs):
     # title = kwargs.get('title', '')
     dpi = kwargs.get('dpi', 100)
     linewidth = kwargs.get('linewidth', 1.5)
@@ -69,13 +79,13 @@ def save_intensity_slices(intensity, filename: str, package_name: str, geometry_
     [ax.legend() for ax in [ax1, ax2]]
     [ax.grid(True) for ax in [ax1, ax2]]
 
-    filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/intensity/{package_name}/{filename}"
-    fig1.savefig(filepath)
+    saver.save_image(fig1, package_name, filename)
 
     plt.close(fig1)
 
 
-def save_phase_slices(phase, filename: str, package_name: str, unwrapped=True, geometry_center=False, **kwargs):
+def save_phase_slices(phase, filename: str, package_name: str, saver: Saver, unwrapped=True, geometry_center=False,
+                      **kwargs):
     linewidth = kwargs.get('linewidth', 1.5)
     unwrapped_ymin, unwrapped_ymax = kwargs.get('unwrapped_ylims', [None, None])
     wrapped_ymin, wrapped_ymax = kwargs.get('wrapped_ylims', [-np.pi, np.pi])
@@ -160,15 +170,14 @@ def save_phase_slices(phase, filename: str, package_name: str, unwrapped=True, g
     [ax.legend() for ax in [ax1, ax2, ax4, ax5]]
     [ax.grid(True) for ax in [ax1, ax2, ax4, ax5]]
 
-    filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/phase/{package_name}/{filename}"
-    fig1.savefig(filepath)
+    saver.save_image(fig1, package_name, filename)
 
     plt.close(fig1)
 
 
 # сохранение графика R(z)
 def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
-             matrix: np.ndarray, wave: Wave, start=None, stop=None, step=None):
+             matrix: np.ndarray, wave: Wave, saver: Saver, start=None, stop=None, step=None):
     fig, ax = plt.subplots(figsize=[8.0, 6.0], dpi=300, facecolor='w', edgecolor='k')
 
     for z in np.arange(0, np.shape(matrix)[0], 1):
@@ -200,6 +209,8 @@ def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
 
     ax.grid(True)
 
-    filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/r(z)/trz_f_" \
-               f"{int(units.m2mm(np.around(wave.get_focus(), decimals=3)))}_g{wave.get_gaussian_width()}_matrix_test"
-    fig.savefig(filepath)
+    package_name = 'r(z)'
+    filename = f'trz_f_{int(units.m2mm(np.around(wave.get_focus(), decimals=3)))}_' \
+               f'g{wave.get_gaussian_width()}_matrix'
+
+    saver.save_image(fig, package_name, filename)
