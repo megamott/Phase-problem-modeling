@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import numpy as np
 
 from src.model.areas.interface.aperture import Aperture
@@ -5,8 +6,9 @@ from src.model.areas.interface.area import Area
 
 
 # интерфейс волны
-class Wave:
+class Wave(ABC):
 
+    @abstractmethod
     def get_wrapped_phase(self, aperture=None) -> np.ndarray:
         """
         Возвращает неразвернутую фазу волны
@@ -16,6 +18,7 @@ class Wave:
         """
         pass
 
+    @abstractmethod
     def get_unwrapped_phase(self, aperture=None) -> np.ndarray:
         """
         Возвращает развернутую фазу волны
@@ -25,13 +28,7 @@ class Wave:
         """
         pass
 
-    def get_intensity(self) -> np.ndarray:
-        """
-        Возвращает интенсивность волны
-        :return: матрица значений интенсивности
-        """
-        pass
-
+    @abstractmethod
     def get_wavefront_radius(self, aperture: Aperture) -> float:
         """
         Возвращает радиус волнового фронта, найденный по следующей формуле:
@@ -42,32 +39,104 @@ class Wave:
         :rtype: Aperture
         :return: радиус волнового фронта при заданной обрезающей апертуре
         """
+
+    pass
+
+    @property
+    @abstractmethod
+    def field(self) -> np.ndarray:
+        """
+        Распределение поля волны на координатной сетке в комплексной форме
+        """
         pass
 
-    def get_wavelength(self) -> float:
+    @field.setter
+    @abstractmethod
+    def field(self, field):
+        pass
+
+    @property
+    @abstractmethod
+    def area(self) -> Area:
         """
-        Возвращает длину волны в метрах
+        Координатная сетка
+        """
+        pass
+
+    @area.setter
+    @abstractmethod
+    def area(self, area):
+        pass
+
+    @property
+    @abstractmethod
+    def phase(self) -> np.ndarray:
+        """
+        Распределение фазы поля волны
         :return:
         """
         pass
 
-    def get_area(self) -> Area:
+    @phase.setter
+    @abstractmethod
+    def phase(self, phase):
+        pass
+
+    @property
+    @abstractmethod
+    def intensity(self) -> np.ndarray:
         """
-        Возвращает координатную сетку волны
+        Распределение интенсивности поля волны
         :return:
         """
         pass
 
-    def get_focus(self) -> float:
+    @intensity.setter
+    @abstractmethod
+    def intensity(self, intensity):
+        pass
+
+    @property
+    @abstractmethod
+    def wavelength(self) -> float:
         """
-        Возвращает фокусное расстояние
+        Длина волны [м]
         :return:
         """
+        pass
+
+    @wavelength.setter
+    @abstractmethod
+    def wavelength(self, wavelength):
+        pass
+
+    @property
+    @abstractmethod
+    def focal_len(self) -> float:
+        """
+        Фокусное расстояние [м]
+        :return:
+        """
+        pass
+
+    @focal_len.setter
+    @abstractmethod
+    def focal_len(self, focal_len):
         pass
 
     # данный метод нужно убрать, так как не у всех волн в профиле интенсивности гауссоида
-    def get_gaussian_width(self) -> float:
+    @property
+    @abstractmethod
+    def gaussian_width_param(self) -> float:
         """
-        Возвращает размер гауссоиды на уровне 1/e^2 в [px]
+        Размер гауссоиды на уровне 1/e^2 в [px]
         :return:
         """
+        pass
+
+    @gaussian_width_param.setter
+    @abstractmethod
+    def gaussian_width_param(self, gaussian_width_param):
+        pass
+
+

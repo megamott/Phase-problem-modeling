@@ -1,20 +1,26 @@
+from abc import ABC, abstractmethod
 import numpy as np
 
 
 # интерфейс апертуры
-class Aperture:
-    def get_aperture(self) -> np.ndarray:
+class Aperture(ABC):
+
+    @property
+    @abstractmethod
+    def aperture(self) -> np.ndarray:
         """
-        Возвращает матрицу поля вида:
+        Матрица поля вида:
         1 в пределах апертуры
         0 за пределами апертуры
         :return:
         """
         pass
 
-    def get_aperture_diameter(self) -> float:
+    @property
+    @abstractmethod
+    def aperture_diameter(self) -> float:
         """
-        Возвращает размер апертуры
+        Размер апертуры
         :return:
         """
         pass

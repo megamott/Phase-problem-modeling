@@ -17,13 +17,7 @@ class RadialAperture(Aperture):
         """
         aperture_diameter = units.px2m(aperture_diameter, px_size_m=radial_area.pixel_size)  # [м]
         self.__aperture_diameter = aperture_diameter
-        self.__aperture = circ(radial_area.get_coordinate_grid(), w=aperture_diameter)
-
-    def get_aperture(self) -> np.ndarray:
-        return self.__aperture
-
-    def get_aperture_diameter(self) -> float:
-        return self.__aperture_diameter
+        self.__aperture = circ(radial_area.coordinate_grid, w=aperture_diameter)
 
     @property
     def aperture_diameter(self):

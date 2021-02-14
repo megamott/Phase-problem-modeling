@@ -1,18 +1,24 @@
+from abc import ABC, abstractmethod
 import numpy as np
 
 
 # интерфейс координатной сетки
-class Area:
-    def get_coordinate_grid(self) -> np.ndarray:
+class Area(ABC):
+
+    @property
+    @abstractmethod
+    def coordinate_grid(self) -> np.ndarray:
         """
-        Возвращает сетку координат
+        Сетка координат
         :return:
         """
         pass
 
-    def get_pixel_size(self) -> float:
+    @property
+    @abstractmethod
+    def pixel_size(self) -> float:
         """
-        Возвращает размер пикселя
+        Размер пикселя
         :return:
         """
         pass

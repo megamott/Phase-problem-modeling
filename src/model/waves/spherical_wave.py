@@ -19,13 +19,13 @@ class SphericalWave(Wave):
         :param gaussian_width_param: ширина гауссоиды на уровне интенсивности 1/e^2 [px]
         :param wavelength: длина волны [м]
         """
-        y_grid_array, x_grid_array = ar.get_coordinate_grid()
+        y_grid_array, x_grid_array = ar.coordinate_grid
         radius_vector = np.sqrt(x_grid_array ** 2 + y_grid_array ** 2 + focal_len ** 2)
         # волновой вектор
         k = 2 * np.pi / wavelength
 
         self.__gaussian_width_param = gaussian_width_param
-        gaussian_width_param = units.px2m(gaussian_width_param, px_size_m=ar.get_pixel_size())
+        gaussian_width_param = units.px2m(gaussian_width_param, px_size_m=ar.pixel_size)
 
         self.__intensity = gauss_2d(x_grid_array, y_grid_array, wx=gaussian_width_param / 4,
                                     wy=gaussian_width_param / 4)
@@ -37,18 +37,15 @@ class SphericalWave(Wave):
 
     def get_wrapped_phase(self, aperture=None) -> np.ndarray:
         if aperture:
-            return self.__phase * aperture.get_aperture()
+            return self.__phase * aperture.aperture
         else:
             return self.__phase
 
     def get_unwrapped_phase(self, aperture=None) -> np.ndarray:
         if aperture:
-            return unwrap_phase(self.__phase * aperture.get_aperture())
+            return unwrap_phase(self.__phase * aperture.aperture)
         else:
             return unwrap_phase(self.__phase)
-
-    def get_intensity(self) -> np.ndarray:
-        return self.__intensity
 
     def get_wavefront_radius(self, aperture: Aperture) -> float:
         # развернутая фаза, обрезанная апертурой
@@ -58,50 +55,24 @@ class SphericalWave(Wave):
         saggita = units.rad2mm(calc_amplitude(cut_phase), self.__wavelength)
 
         # определение радиуса кривизны волнового фронта
-        wavefront_radius = calculate_radius(saggita, units.m2mm(aperture.get_aperture_diameter()))
+        wavefront_radius = calculate_radius(saggita, units.m2mm(aperture.aperture_diameter))
 
         return wavefront_radius
 
-    def get_wavelength(self) -> float:
-        return self.__wavelength
-
-    def get_area(self) -> Area:
-        return self.__area
-
-    def get_focus(self) -> float:
-        return self.__focal_len
-
-    def get_gaussian_width(self) -> float:
-        return self.__gaussian_width_param
-
     @property
     def field(self) -> np.ndarray:
-        """
-        Распределение поля волны на координатной сетке в комплексной форме
-        """
         return self.__field
 
     @property
     def area(self) -> Area:
-        """
-        Координатная сетка
-        """
         return self.__area
 
     @property
     def phase(self) -> np.ndarray:
-        """
-        Распределение фазы поля
-        :return:
-        """
         return np.angle(self.__field)
 
     @property
     def intensity(self) -> np.ndarray:
-        """
-        Распределение интенсивности поля
-        :return:
-        """
         return np.abs(self.__field) ** 2
 
     @property
@@ -119,6 +90,10 @@ class SphericalWave(Wave):
     @field.setter
     def field(self, field):
         self.__field = field
+
+    @area.setter
+    def area(self, area):
+        self.__area = area
 
     @wavelength.setter
     def wavelength(self, wavelength):

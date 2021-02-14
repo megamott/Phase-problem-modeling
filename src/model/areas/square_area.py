@@ -18,13 +18,15 @@ class SquareArea(Area):
         self.__width = width
         self.__pixel_size = pixel_size
 
-    def get_coordinate_grid(self) -> tuple[np.ndarray, np.ndarray]:
+    @property
+    def coordinate_grid(self) -> tuple[np.ndarray, np.ndarray]:
         y_grid_array, x_grid_array = np.mgrid[-self.__height / 2:self.__height / 2, -self.__width / 2:self.__width / 2]
         y_grid_array, x_grid_array = (units.px2m(y_grid_array, px_size_m=self.__pixel_size),
                                       units.px2m(x_grid_array, px_size_m=self.__pixel_size))
         return y_grid_array, x_grid_array
 
-    def get_pixel_size(self) -> float:
+    @property
+    def pixel_size(self) -> float:
         return self.__pixel_size
 
     @property
@@ -34,10 +36,6 @@ class SquareArea(Area):
     @property
     def width(self) -> float:
         return self.__width
-
-    @property
-    def pixel_size(self) -> float:
-        return self.__pixel_size
 
     @height.setter
     def height(self, height):

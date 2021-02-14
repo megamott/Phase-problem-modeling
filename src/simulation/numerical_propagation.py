@@ -9,9 +9,9 @@ from src.model.waves.spherical_wave import SphericalWave
 from src.utils.files_routine import *
 from src.utils.math.general import *
 
-# todo поменять все informal interface на formal interface
 # todo интерфейс Saver переписать так, чтобы было удобно пользоваться
 # todo создать класс Plotter
+# todo добавть в Wave Propagable
 
 # конфигурация
 saver = MacSaver()
@@ -28,26 +28,26 @@ t_num = 0
 
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
-stop = units.mm2m(500)
+stop = units.mm2m(200)
 step = units.mm2m(5)
 
 # изменяющийся параметр для выборок
-matrix = np.array([1024])
+matrixes = np.array([1024])
 
 # массивы для записи значений циклов
 array_of_wavefront_radius_arrays = []
 array_of_z_distances = []
 
 # создание волны
-square_area_1 = SquareArea(matrix[0], matrix[0], pixel_size=px_size)
+square_area_1 = SquareArea(matrixes[0], matrixes[0], pixel_size=px_size)
 radial_area_1 = RadialArea(square_area_1)
 aperture = RadialAperture(radial_area_1, 2 * gaussian_width_param)
 field = SphericalWave(square_area_1, focal_len, gaussian_width_param, wavelength)
 field.field *= aperture.aperture
 
-for i in np.arange(matrix.shape[0]):
-    ic(matrix[i])
-    matrix_size = matrix[i]
+for matrix in matrixes:
+    ic(matrix)
+    matrix_size = matrix
     square_area_1 = SquareArea(matrix_size, matrix_size, pixel_size=px_size)
 
     # массивы для записи значений одного цикла
@@ -70,8 +70,8 @@ for i in np.arange(matrix.shape[0]):
         field_z = propagation_method.propagate_on_distance(z, field)
 
         # преобразование апертуры
-        aperture = RadialAperture(radial_area_1, widest_diameter(field_z.get_intensity() + 0.0005, thresholds[t_num]))
-        ic(widest_diameter(field_z.get_intensity(), thresholds[t_num]))
+        aperture = RadialAperture(radial_area_1, widest_diameter(field_z.intensity + 0.0005, thresholds[t_num]))
+        ic(widest_diameter(field_z.intensity, thresholds[t_num]))
 
         # развернутая апертура
         up = field_z.get_unwrapped_phase(aperture=aperture)
@@ -83,8 +83,8 @@ for i in np.arange(matrix.shape[0]):
         wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
 
-        # save_phase(z, field_z, up, wp, r, saver)
-        # save_intensity(z, field_z, saver)
+        save_phase(z, field_z, up, wp, r, saver)
+        save_intensity(z, field_z, saver)
 
         ic(r)
 
@@ -93,4 +93,4 @@ for i in np.arange(matrix.shape[0]):
     array_of_z_distances.append(z_distances_array)
 
 
-# save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrix, field, saver, step=step)
+save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)

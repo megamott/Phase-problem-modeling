@@ -16,11 +16,11 @@ class AngularSpectrum(Propagable):
         width = propagated_wave.field.shape[1]  # количество элеметов в каждой строке матрицы
 
         # волновое число
-        wave_number = 2 * np.pi / propagated_wave.get_wavelength()
+        wave_number = 2 * np.pi / propagated_wave.wavelength
 
         # создание сетки в частотной области при условии выполнения теоремы Котельникова
-        nu_x = np.arange(-width / 2, width / 2) / (width * propagated_wave.get_area().get_pixel_size())
-        nu_y = np.arange(-height / 2, height / 2) / (height * propagated_wave.get_area().get_pixel_size())
+        nu_x = np.arange(-width / 2, width / 2) / (width * propagated_wave.area.pixel_size)
+        nu_y = np.arange(-height / 2, height / 2) / (height * propagated_wave.area.pixel_size)
         nu_x_grid, nu_y_grid = np.meshgrid(nu_x, nu_y)
 
         # сдвиг высоких частот к краям сетки
@@ -31,8 +31,8 @@ class AngularSpectrum(Propagable):
 
         # передаточная функция слоя пространства
         exp_term = np.sqrt(
-            1 - (propagated_wave.get_wavelength() * nu_x_grid) ** 2 -
-                (propagated_wave.get_wavelength() * nu_y_grid) ** 2)
+            1 - (propagated_wave.wavelength * nu_x_grid) ** 2 -
+                (propagated_wave.wavelength * nu_y_grid) ** 2)
         h = np.exp(1j * wave_number * z * exp_term)
 
         # обратное преобразование Фурье

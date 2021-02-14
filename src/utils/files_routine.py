@@ -10,9 +10,9 @@ from src.utils.math import units
 
 # сохранение изображения неразвернутой и развернутой фаз
 def save_phase(z: float, wave: Wave, unwrapped_phase: np.ndarray, phase_z, wavefront_radius: float, saver: Saver):
-    focus = wave.get_focus()
-    gaussian_width_param = wave.get_gaussian_width()
-    k = 2 * np.pi / wave.get_wavelength()
+    focus = wave.focal_len
+    gaussian_width_param = wave.gaussian_width_param
+    k = 2 * np.pi / wave.wavelength
     fn = f'phase_z_{int(units.m2mm(z))}mm'
     unwrapped_phase_lbl = f'[{np.min(unwrapped_phase):.2f}, {np.max(unwrapped_phase):.2f}] rad; ' \
                           f'[{np.min(unwrapped_phase) * 1e+6 / k:.1f}, {np.max(unwrapped_phase) * 1e+6 / k:.1f}] um'
@@ -20,7 +20,7 @@ def save_phase(z: float, wave: Wave, unwrapped_phase: np.ndarray, phase_z, wavef
     save_phase_slices(phase_z, fn,
                       package_name=f'phase/phase_f{int(units.m2mm(np.around(focus, decimals=3)))}_'
                                    f'g{gaussian_width_param}_'
-                                   f's{wave.get_area().get_coordinate_grid()[0].shape[0]}',
+                                   f's{wave.area.coordinate_grid[0].shape[0]}_test',
                       saver=saver,
                       unwrapped=False, geometry_center=True, linewidth=1,
                       unwrapped_ylims=(-100, 100), unwrapped_phase_lbl=unwrapped_phase_lbl,
@@ -28,10 +28,10 @@ def save_phase(z: float, wave: Wave, unwrapped_phase: np.ndarray, phase_z, wavef
 
 
 def save_intensity(z: float, wave: Wave, saver: Saver):
-    save_intensity_slices(wave.get_intensity(), filename=f'intensity_z_{int(units.m2mm(z))}mm',
-                          package_name=f'intensity/intensity_f{int(units.m2mm(np.around(wave.get_focus(), decimals=3)))}_'
-                                       f'g{wave.get_gaussian_width()}_'
-                                       f's{wave.get_area().get_coordinate_grid()[0].shape[0]}', saver=saver)
+    save_intensity_slices(wave.intensity, filename=f'intensity_z_{int(units.m2mm(z))}mm',
+                          package_name=f'intensity/intensity_f{int(units.m2mm(np.around(wave.focal_len, decimals=3)))}_'
+                                       f'g{wave.gaussian_width_param}_'
+                                       f's{wave.area.coordinate_grid[0].shape[0]}_test', saver=saver)
 
 
 def save_intensity_slices(intensity, filename: str, package_name: str, saver: Saver, geometry_center=False, **kwargs):
@@ -183,7 +183,7 @@ def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
     for z in np.arange(0, np.shape(matrix)[0], 1):
         radius_y = array_of_wavefront_radius_arrays[z]
         z_propagation_distance = array_of_z_distances[z]
-        theory_r_z = np.abs(np.array(z_propagation_distance) - units.m2mm(wave.get_focus()))
+        theory_r_z = np.abs(np.array(z_propagation_distance) - units.m2mm(wave.focal_len))
 
         if z == 0:
             ax.plot(z_propagation_distance, theory_r_z, label='Theoretical', color='k', markersize=3.)
@@ -195,22 +195,22 @@ def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
     # ax.yaxis.set_major_locator(ticker.MultipleLocator(100))
     # ax.yaxis.set_minor_locator(ticker.MultipleLocator(20))
 
-    theory_r_z = np.abs(np.array(array_of_z_distances[0]) - units.m2mm(wave.get_focus()))
+    theory_r_z = np.abs(np.array(array_of_z_distances[0]) - units.m2mm(wave.focal_len))
     ax.set_xlim(0, 500)
     ax.set_ylim(0, theory_r_z[-1])
 
     plt.xlabel('Propagation distance, mm')
     plt.ylabel('R(z), mm', )
     plt.legend()
-    plt.title(f'f\' = {units.m2mm(np.around(wave.get_focus(), decimals=3))} mm; '
-              f'g = {wave.get_gaussian_width()}; step = {step} mm',
+    plt.title(f'f\' = {units.m2mm(np.around(wave.focal_len, decimals=3))} mm; '
+              f'g = {wave.gaussian_width_param}; step = {step} mm',
               fontsize=14)
     # plt.show()
 
     ax.grid(True)
 
     package_name = 'r(z)'
-    filename = f'trz_f_{int(units.m2mm(np.around(wave.get_focus(), decimals=3)))}_' \
-               f'g{wave.get_gaussian_width()}_matrix'
+    filename = f'trz_f_{int(units.m2mm(np.around(wave.focal_len, decimals=3)))}_' \
+               f'g{wave.gaussian_width_param}_matrix_test'
 
     saver.save_image(fig, package_name, filename)
