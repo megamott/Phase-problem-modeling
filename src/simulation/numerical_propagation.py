@@ -78,8 +78,8 @@ for matrix in matrixes:
         wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
 
-        save_phase(z, field, up, wp, r, saver)
-        save_intensity(z, field, saver)
+        # save_phase(z, field, up, wp, r, saver)
+        # save_intensity(z, field, saver)
 
         ic(r)
 

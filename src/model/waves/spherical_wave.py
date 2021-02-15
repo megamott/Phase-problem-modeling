@@ -1,12 +1,12 @@
 from numpy.fft import fft2, fftshift, ifft2
 from skimage.restoration import unwrap_phase
 
+from src.utils.math import units
+from src.model.waves.interface.wave import Wave
 from src.model.areas.interface.aperture import Aperture
 from src.model.areas.interface.area import Area
-from src.model.waves.interface.wave import Wave
-from src.utils.math import units
-from src.utils.math.general import *
 from src.utils.optic.field import *
+from src.utils.math.general import *
 
 
 # класс волны со сферической аберрацией или сходящейся сферической волны
@@ -61,9 +61,9 @@ class SphericalWave(Wave):
         return wavefront_radius
 
     def propagate_on_distance(self, z: float):
-        self.__angular_spectrum_propagation__(z)
+        self.__angular_spectrum_propagation(z)
 
-    def __angular_spectrum_propagation__(self, z: float):
+    def __angular_spectrum_propagation(self, z: float):
         """
         Метод распространения (преобразования) волны методом углового спектра
         :param z: дистанция распространения
