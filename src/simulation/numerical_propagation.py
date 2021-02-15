@@ -4,14 +4,12 @@ from src.model.areas.radial_aperture import RadialAperture
 from src.model.areas.radial_area import RadialArea
 from src.model.areas.square_area import SquareArea
 from src.model.configuration.mac_saver import MacSaver
-from src.model.propagation.angular_spectrum import AngularSpectrum
 from src.model.waves.spherical_wave import SphericalWave
 from src.utils.files_routine import *
 from src.utils.math.general import *
 
 # todo интерфейс Saver переписать так, чтобы было удобно пользоваться
 # todo создать класс Plotter
-# todo добавть в Wave Propagable
 
 # конфигурация
 saver = MacSaver()
@@ -59,32 +57,29 @@ for matrix in matrixes:
         radial_area_1 = RadialArea(square_area_1)
         aperture = RadialAperture(radial_area_1, 2 * gaussian_width_param)
 
-        # выбор метода распространения волны
-        propagation_method = AngularSpectrum()
-
         # создание волны
         field = SphericalWave(square_area_1, focal_len, gaussian_width_param, wavelength)
         field.field *= aperture.aperture
 
         # распространение волны на дистанцию z
-        field_z = propagation_method.propagate_on_distance(z, field)
+        field.propagate_on_distance(z)
 
         # преобразование апертуры
-        aperture = RadialAperture(radial_area_1, widest_diameter(field_z.intensity + 0.0005, thresholds[t_num]))
-        ic(widest_diameter(field_z.intensity, thresholds[t_num]))
+        aperture = RadialAperture(radial_area_1, widest_diameter(field.intensity, thresholds[t_num]))
+        ic(widest_diameter(field.intensity, thresholds[t_num]))
 
         # развернутая апертура
-        up = field_z.get_unwrapped_phase(aperture=aperture)
+        up = field.get_unwrapped_phase(aperture=aperture)
         # неразвернутая апертура
-        wp = field_z.get_wrapped_phase(aperture=aperture)
+        wp = field.get_wrapped_phase(aperture=aperture)
         # радиус волнового фронта
-        r = field_z.get_wavefront_radius(aperture)
+        r = field.get_wavefront_radius(aperture)
 
         wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
 
-        save_phase(z, field_z, up, wp, r, saver)
-        save_intensity(z, field_z, saver)
+        save_phase(z, field, up, wp, r, saver)
+        save_intensity(z, field, saver)
 
         ic(r)
 

@@ -3,10 +3,11 @@ import numpy as np
 
 from src.model.areas.interface.aperture import Aperture
 from src.model.areas.interface.area import Area
+from src.model.propagation.interface.propagate import Propagable
 
 
 # интерфейс волны
-class Wave(ABC):
+class Wave(Propagable):
 
     @abstractmethod
     def get_wrapped_phase(self, aperture=None) -> np.ndarray:

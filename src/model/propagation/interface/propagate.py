@@ -1,30 +1,14 @@
 from abc import ABC, abstractmethod
-import numpy as np
-
-from src.model.waves.interface.wave import Wave
 
 
-# интерфейс метода распространения волны в пространстве
+# интерфейс объекта, способного распространяться в пространстве
 class Propagable(ABC):
 
     @abstractmethod
-    def propagate_on_distance(self, z: float, wave: Wave) -> np.ndarray:
+    def propagate_on_distance(self, z: float):
         """
-        Возвращает матрицу распространившейся волны на дистанцию z
+        Возвращает распространившуюся в пространстве на дистанцию z (преобразованную) волну
         :param z: дистанция распространения волны в пространстве [м]
-        :param wave: волна
-        :return: возвращает матрицу волны в плоскости с координатой z
+        :return:
         """
         pass
-
-    # @abstractmethod
-    # def propagate_from_to(self, start: float, stop: float, step: float, wave: Wave) -> np.ndarray:
-    #     """
-    #     Возвращает матрицы распространившихся в пространстве волн от координаты start до координату stop с шагом step
-    #     :param start: координата начала распространения волны
-    #     :param stop: координата конца распространения волны
-    #     :param step: шаг распространения волны
-    #     :param wave: волна
-    #     :return: массив матриц волн
-    #     """
-    #     pass
