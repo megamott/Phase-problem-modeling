@@ -18,7 +18,7 @@ saver = MacSaver()
 wavelength = 659.6e-9
 px_size = 5.04e-6
 focal_len = 100e-3
-gaussian_width_param = 250
+gaussian_width_param = 400
 
 # вариации порога определения апертуры
 thresholds = [np.exp(-2), units.percent2decimal(1), units.percent2decimal(0.5), units.percent2decimal(0.8)]
@@ -26,11 +26,11 @@ t_num = 0
 
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
-stop = units.mm2m(200)
+stop = units.mm2m(500)
 step = units.mm2m(1)
 
 # изменяющийся параметр для выборок
-matrixes = np.array([1024])
+matrixes = np.array([512])
 
 # массивы для записи значений циклов
 array_of_wavefront_radius_arrays = []

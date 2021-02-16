@@ -186,8 +186,8 @@ def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
         theory_r_z = np.abs(np.array(z_propagation_distance) - units.m2mm(wave.focal_len))
 
         if z == 0:
-            ax.plot(z_propagation_distance, theory_r_z, label='Theoretical', color='k', markersize=3.)
-        ax.plot(z_propagation_distance, radius_y, '-o', label=f'size: {matrix[z]}', linewidth=1., markersize=3.)
+            ax.plot(z_propagation_distance, theory_r_z, label='Theoretical', color='k', markersize=2)
+        ax.plot(z_propagation_distance, radius_y, '-o', label=f'size: {matrix[z]}', linewidth=1., markersize=2)
 
     # ax.xaxis.set_major_locator(ticker.MultipleLocator(100))
     # ax.xaxis.set_minor_locator(ticker.MultipleLocator(20))
@@ -211,6 +211,6 @@ def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
 
     package_name = 'r(z)'
     filename = f'trz_f_{int(units.m2mm(np.around(wave.focal_len, decimals=3)))}_' \
-               f'g{wave.gaussian_width_param}_matrix_test'
+               f'g{wave.gaussian_width_param}_s{wave.area.coordinate_grid[0].shape[0]}_matrix_test'
 
     saver.save_image(fig, package_name, filename)
