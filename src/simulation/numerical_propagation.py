@@ -21,13 +21,13 @@ focal_len = 100e-3
 gaussian_width_param = 250
 
 # вариации порога определения апертуры
-thresholds = [np.exp(-2), units.percent2decimal(1), units.percent2decimal(0.5)]
+thresholds = [np.exp(-2), units.percent2decimal(1), units.percent2decimal(0.5), units.percent2decimal(0.8)]
 t_num = 0
 
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
 stop = units.mm2m(200)
-step = units.mm2m(5)
+step = units.mm2m(1)
 
 # изменяющийся параметр для выборок
 matrixes = np.array([1024])
@@ -70,16 +70,18 @@ for matrix in matrixes:
 
         # развернутая апертура
         up = field.get_unwrapped_phase(aperture=aperture)
+
         # неразвернутая апертура
         wp = field.get_wrapped_phase(aperture=aperture)
+
         # радиус волнового фронта
         r = field.get_wavefront_radius(aperture)
 
         wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
 
-        # save_phase(z, field, up, wp, r, saver)
-        # save_intensity(z, field, saver)
+        save_phase(z, field, up, wp, r, saver)
+        save_intensity(z, field, saver)
 
         ic(r)
 

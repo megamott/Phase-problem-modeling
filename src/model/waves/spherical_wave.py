@@ -1,3 +1,4 @@
+from icecream import ic
 from numpy.fft import fft2, fftshift, ifft2
 from skimage.restoration import unwrap_phase
 
@@ -52,16 +53,27 @@ class SphericalWave(Wave):
         # развернутая фаза, обрезанная апертурой
         cut_phase = self.get_unwrapped_phase(aperture=aperture)
 
+        mask2 = cut_phase == 0
+        cut_phase[mask2] = np.max(cut_phase)
+        cut_phase -= cut_phase.min()
+
+        cut_phase[mask2] = 0
+
         # поиск стрелки прогиба
-        saggita = units.rad2mm(calc_amplitude(cut_phase), self.__wavelength)
+        a = calc_amplitude(cut_phase)
+        saggita = units.rad2mm(a, self.__wavelength)
 
         # определение радиуса кривизны волнового фронта
-        wavefront_radius = calculate_radius(saggita, units.m2mm(aperture.aperture_diameter))
+        ap = units.m2mm(aperture.aperture_diameter)
+        wavefront_radius = calculate_radius(saggita, ap)
+        ic(aperture.aperture_diameter)
+        ic(saggita)
 
         return wavefront_radius
 
-    def propagate_on_distance(self, z: float):
-        self.__angular_spectrum_propagation(z)
+    def propagate_on_distance(self, z: float, method='angular_spectrum'):
+        if method == 'angular_spectrum':
+            self.__angular_spectrum_propagation(z)
 
     def __angular_spectrum_propagation(self, z: float):
         """
