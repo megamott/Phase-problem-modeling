@@ -18,16 +18,16 @@ saver = MacSaver()
 wavelength = 659.6e-9
 px_size = 5.04e-6
 focal_len = 100e-3
-gaussian_width_param = 400
+gaussian_width_param = 250
 
 # вариации порога определения апертуры
-thresholds = [np.exp(-2), units.percent2decimal(1), units.percent2decimal(0.5), units.percent2decimal(0.8)]
+thresholds = [np.exp(-2), units.percent2decimal(13), units.percent2decimal(0.5), units.percent2decimal(0.8)]
 t_num = 0
 
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
-stop = units.mm2m(500)
-step = units.mm2m(1)
+stop = units.mm2m(30)
+step = units.mm2m(5)
 
 # изменяющийся параметр для выборок
 matrixes = np.array([512])
@@ -35,6 +35,8 @@ matrixes = np.array([512])
 # массивы для записи значений циклов
 array_of_wavefront_radius_arrays = []
 array_of_z_distances = []
+w_arrays = []
+a_arrays = []
 
 # создание волны
 square_area_1 = SquareArea(matrixes[0], matrixes[0], pixel_size=px_size)
@@ -68,6 +70,8 @@ for matrix in matrixes:
         aperture = RadialAperture(radial_area_1, widest_diameter(field.intensity, thresholds[t_num]))
         ic(widest_diameter(field.intensity, thresholds[t_num]))
 
+        w, a = save_aperture_bound(z, field, aperture, saver)
+
         # развернутая апертура
         up = field.get_unwrapped_phase(aperture=aperture)
 
@@ -79,9 +83,11 @@ for matrix in matrixes:
 
         wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
+        w_arrays.append(w)
+        a_arrays.append(a)
 
-        save_phase(z, field, up, wp, r, saver)
-        save_intensity(z, field, saver)
+        # save_phase(z, field, up, wp, r, saver)
+        # save_intensity(z, field, saver)
 
         ic(r)
 
@@ -91,3 +97,4 @@ for matrix in matrixes:
 
 
 save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)
+save_plots(w_arrays + a_arrays, saver)

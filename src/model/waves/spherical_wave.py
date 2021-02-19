@@ -54,20 +54,21 @@ class SphericalWave(Wave):
         cut_phase = self.get_unwrapped_phase(aperture=aperture)
 
         # преобразование развернутой фазы для устранения ошибок
-        mask2 = cut_phase == 0
-        cut_phase[mask2] = np.max(cut_phase)
-        cut_phase -= cut_phase.min()
-        cut_phase[mask2] = 0
+        # mask2 = cut_phase == 0
+        # cut_phase[mask2] = np.max(cut_phase)
+        # cut_phase -= cut_phase.min()
+        # cut_phase[mask2] = 0
 
         # поиск стрелки прогиба
-        a = calc_amplitude(cut_phase)
-        saggita = units.rad2mm(a, self.__wavelength)
+        amplitude = calc_amplitude(cut_phase)
+        sagitta = units.rad2mm(amplitude, self.__wavelength)
 
         # определение радиуса кривизны волнового фронта
-        ap = units.m2mm(aperture.aperture_diameter)
-        wavefront_radius = calculate_radius(saggita, ap)
+        ap_diameter = units.m2mm(aperture.aperture_diameter)
+        wavefront_radius = calculate_radius(sagitta, ap_diameter)
+
         ic(aperture.aperture_diameter)
-        ic(saggita)
+        ic(sagitta)
 
         return wavefront_radius
 

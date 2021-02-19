@@ -1,10 +1,13 @@
+from typing import List
 import matplotlib.pyplot as plt
+import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from skimage.restoration import unwrap_phase
 
 from src.model.configuration.interface.saver import Saver
 from src.model.waves.interface.wave import Wave
-from src.utils.math.general import *
+from src.model.areas.interface.aperture import Aperture
+from src.utils.math.general import get_slice, calc_amplitude
 from src.utils.math import units
 
 
@@ -214,3 +217,96 @@ def save_r_z(array_of_z_distances: list, array_of_wavefront_radius_arrays: list,
                f'g{wave.gaussian_width_param}_s{wave.area.coordinate_grid[0].shape[0]}_matrix_test'
 
     saver.save_image(fig, package_name, filename)
+
+
+def save_aperture_bound(z: float, wave: Wave, aperture: Aperture, saver: Saver):
+    fig = plt.figure(dpi=200)
+    ax = fig.gca()
+
+    wrp_phase_xslice_x, wrp_phase_xslice_y = get_slice(
+        wave.phase,
+        wave.phase.shape[0] // 2,
+        xslice=True
+    )
+    ap_xslice_x, ap_xslice_y = get_slice(
+        aperture.aperture,
+        aperture.aperture.shape[0] // 2,
+        xslice=True
+    )
+
+    change_index = 0
+
+    for i, v in enumerate(ap_xslice_y):
+
+        if v == 0:
+            continue
+        else:
+            change_index = i
+            break
+
+    cut_phase = wave.get_unwrapped_phase(aperture=aperture)
+    amplitude = calc_amplitude(cut_phase)
+    sagitta = units.rad2mm(amplitude, wave.wavelength)
+
+    ax.plot(
+        wrp_phase_xslice_x[change_index - 1:change_index + 1],  # 245:310
+        wrp_phase_xslice_y[change_index - 1:change_index + 1],
+        '-*',
+        linewidth=1.,
+        markersize=3,
+        label=f'z{z}_'
+              f'r{wave.get_wavefront_radius(aperture)}_'
+              f'ad{units.m2px(aperture.aperture_diameter)}_'
+              f's{units.mm2um(sagitta)}'
+    )
+    ax.plot(ap_xslice_x[change_index - 1:change_index + 1],
+            ap_xslice_y[change_index - 1:change_index + 1],
+            '-|')
+
+    package_name = 'bound'
+    filename = f'bound_f_{int(units.m2mm(np.around(wave.focal_len, decimals=3)))}_' \
+               f'g{wave.gaussian_width_param}_s{wave.area.coordinate_grid[0].shape[0]}_' \
+               f'z{int(z * 1000)}'
+
+    ax.legend(loc='lower right', prop={'size': 6})
+    ax.grid()
+    # ax.set_ylim([0, 10])
+    # ax.set_xlim([245, 340])
+
+    saver.save_image(fig, package_name, filename)
+    plt.close(fig)
+
+    return (wrp_phase_xslice_x[change_index - 100:change_index + 100], wrp_phase_xslice_y[change_index - 100:change_index + 100]), \
+           (ap_xslice_x[change_index - 100:change_index + 100], ap_xslice_y[change_index - 100:change_index + 100])
+
+
+def save_plots(data: List, saver: Saver, **kwargs):
+    title = kwargs.get('title', '')
+    dpi = kwargs.get('dpi', 300)
+    linewidths = kwargs.get('linewidths', [1.] * len(data))
+    labels = kwargs.get('labels', [])
+    grid = kwargs.get('grid', True)
+    xlabel = kwargs.get('xlabel', 'x')
+    ylabel = kwargs.get('ylabel', 'y')
+    yscale = kwargs.get('yscale', 'linear')
+
+    fig = plt.figure(dpi=dpi)
+    ax = fig.gca()
+
+    for (x, y) in data:
+        ax.plot(x, y)
+
+    if labels:
+        ax.legend()
+
+    ax.grid(grid)
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.yscale(yscale)
+
+    package_name = 'bound'
+    filename = 'bounds'
+
+    saver.save_image(fig, package_name, filename)
+    plt.close(fig)
