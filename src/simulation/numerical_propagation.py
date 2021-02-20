@@ -4,6 +4,7 @@ from src.model.areas.radial_aperture import RadialAperture
 from src.model.areas.radial_area import RadialArea
 from src.model.areas.square_area import SquareArea
 from src.model.configuration.mac_saver import MacSaver
+from src.model.configuration.onewave_plotter import OneWavePlotter
 from src.model.waves.spherical_wave import SphericalWave
 from src.utils.files_routine import *
 from src.utils.math.general import *
@@ -25,9 +26,9 @@ thresholds = [np.exp(-2), units.percent2decimal(13), units.percent2decimal(0.5),
 t_num = 0
 
 # параметры для итерации при рапространении волны
-start = units.mm2m(0)
-stop = units.mm2m(30)
-step = units.mm2m(5)
+start = units.mm2m(300)
+stop = units.mm2m(300)
+step = units.mm2m(300)
 
 # изменяющийся параметр для выборок
 matrixes = np.array([512])
@@ -70,8 +71,6 @@ for matrix in matrixes:
         aperture = RadialAperture(radial_area_1, widest_diameter(field.intensity, thresholds[t_num]))
         ic(widest_diameter(field.intensity, thresholds[t_num]))
 
-        w, a = save_aperture_bound(z, field, aperture, saver)
-
         # развернутая апертура
         up = field.get_unwrapped_phase(aperture=aperture)
 
@@ -83,11 +82,15 @@ for matrix in matrixes:
 
         wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
-        w_arrays.append(w)
-        a_arrays.append(a)
 
         # save_phase(z, field, up, wp, r, saver)
         # save_intensity(z, field, saver)
+
+        one_wave_plotter = OneWavePlotter(field, aperture, z, saver)
+        # one_wave_plotter.save_plot('r(z)')
+        one_wave_plotter.save_aperture_bound(500)
+        one_wave_plotter.save_phase()
+        one_wave_plotter.save_intensity()
 
         ic(r)
 
@@ -96,5 +99,5 @@ for matrix in matrixes:
     array_of_z_distances.append(z_distances_array)
 
 
-save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)
-save_plots(w_arrays + a_arrays, saver)
+# save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)
+# save_plots(w_arrays + a_arrays, saver)
