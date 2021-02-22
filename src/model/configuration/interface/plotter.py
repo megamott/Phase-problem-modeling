@@ -39,9 +39,11 @@ class Plotter(ABC):
         pass
 
     @abstractmethod
-    def save_r_z(self):
+    def save_r_z(self, matrix, step):
         """
         Сохраняет графики зависимости радиуса волнового фронта от дистанции распространения волны
+        :param step:
+        :param matrix: изменяемый параметр в инициализации волны
         :return:
         """
         pass
@@ -236,3 +238,6 @@ class Plotter(ABC):
 
         return (z, wave.get_wavefront_radius(aperture)) + \
                (z, np.abs(z - units.m2mm(wave.focal_len)))
+
+
+
