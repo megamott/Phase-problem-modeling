@@ -1,4 +1,5 @@
 from icecream import ic
+import numpy as np
 from numpy.fft import fft2, fftshift, ifft2
 from skimage.restoration import unwrap_phase
 
@@ -8,8 +9,10 @@ from ...utils.math import units
 from ...model.waves.interface.wave import Wave
 from ...model.areas.interface.aperture import Aperture
 from ...model.areas.interface.area import Area
-from ...utils.optic.field import *
-from ...utils.math.general import *
+from ...utils.optic.field import gauss_2d
+from ...utils.math.general import get_slice
+from ...utils.math.general import calc_amplitude
+from ...utils.math.general import calculate_radius
 
 
 # класс волны со сферической аберрацией или сходящейся сферической волны
