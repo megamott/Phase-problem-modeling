@@ -20,7 +20,7 @@ class Wave(Propagable):
         pass
 
     @abstractmethod
-    def get_unwrapped_phase(self, aperture=None) -> np.ndarray:
+    def get_unwrapped_phase(self, aperture=None):
         """
         Возвращает развернутую фазу волны
         :param aperture: апертура (circ) для обрезания поля

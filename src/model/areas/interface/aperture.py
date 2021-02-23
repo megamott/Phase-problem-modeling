@@ -24,3 +24,8 @@ class Aperture(ABC):
         :return:
         """
         pass
+
+    @aperture_diameter.setter
+    @abstractmethod
+    def aperture_diameter(self, aperture_diameter):
+        pass
