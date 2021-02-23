@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.propagation.model.areas.interface.area import Area
+from ..areas.interface.area import Area
 from src.propagation.model.areas.square_area import SquareArea
 from src.propagation.utils.math import units
 

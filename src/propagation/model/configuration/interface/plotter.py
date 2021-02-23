@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from skimage.restoration import unwrap_phase
 
-from src.propagation.model.areas.interface.aperture import Aperture
-from src.propagation.model.waves.interface.wave import Wave
-from src.propagation.utils.math import units
-from src.propagation.utils.math.general import get_slice
+from ...areas.interface.aperture import Aperture
+from ...waves.interface.wave import Wave
+from ....utils.math import units
+from ....utils.math.general import get_slice
 
 
 # абстрактный класс строителя графиков
@@ -205,8 +205,8 @@ class Plotter(ABC):
         """
 
         wrp_phase_x_slice_x, wrp_phase_x_slice_y = get_slice(
-            wave.__phase,
-            wave.__phase.shape[0] // 2,
+            wave.phase,
+            wave.phase.shape[0] // 2,
             xslice=True
         )
         ap_x_slice_x, ap_x_slice_y = get_slice(
@@ -237,7 +237,7 @@ class Plotter(ABC):
         """
 
         return (z, wave.get_wavefront_radius(aperture)) + \
-               (z, np.abs(z - units.m2mm(wave._focal_len)))
+               (z, np.abs(z - units.m2mm(wave.focal_len)))
 
 
 

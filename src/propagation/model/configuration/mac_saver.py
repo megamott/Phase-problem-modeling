@@ -1,9 +1,9 @@
 from matplotlib.figure import Figure
 import numpy as np
 
-from src.propagation.model.configuration.interface.saver import Saver
-from src.propagation.model.waves.interface.wave import Wave
-from src.propagation.utils.math import units
+from ..configuration.interface.saver import Saver
+from ..waves.interface.wave import Wave
+from ...utils.math import units
 
 
 class MacSaver(Saver):

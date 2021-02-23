@@ -1,4 +1,4 @@
-from src.propagation.model.configuration.interface.plotter import Plotter
+from ..configuration.interface.plotter import Plotter
 
 
 class MultiWavePlotter(Plotter):

@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.propagation.model.configuration.interface.plotter import Plotter
-from src.propagation.model.configuration.interface.saver import Saver
-from src.propagation.utils.math import units
+from ..configuration.interface.plotter import Plotter
+from ..configuration.interface.saver import Saver
+from ...utils.math import units
 
 
 class SeriesWavePlotter(Plotter):
@@ -46,8 +46,8 @@ class SeriesWavePlotter(Plotter):
 
         ax.legend(loc='upper right')
         ax.grid(grid)
-        plt.title(f'f\' = {units.m2mm(np.around(self.__wave_array[0].__focal_len, decimals=3))} mm; '
-                  f'g = {self.__wave_array[0].__gaussian_width_param}',
+        plt.title(f'f\' = {units.m2mm(np.around(self.__wave_array[0].focal_len, decimals=3))} mm; '
+                  f'g = {self.__wave_array[0].gaussian_width_param}',
                   fontsize=14)
         plt.xlabel(x_label)
         plt.ylabel(y_label)

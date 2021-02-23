@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.propagation.model.areas.interface.area import Area
-from src.propagation.utils.math import units
+from ..areas.interface.area import Area
+from ...utils.math import units
 
 
 # класс квадратной координатной сетки или квадратной матрицы

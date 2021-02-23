@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from matplotlib.figure import Figure
 
-from src.propagation.model.waves.interface.wave import Wave
+from ...waves.interface.wave import Wave
 
 
 # интерфейс для сохранения файлов в папку

@@ -19,8 +19,8 @@ saver = MacSaver()
 # основные параметры для синтеза волны
 wavelength = 659.6e-9
 px_size = 5.04e-6
-focal_len = 50e-3
-gaussian_width_param = 200
+focal_len = 100e-3
+gaussian_width_param = 249
 
 # вариации порога определения апертуры
 thresholds = [np.exp(-2), units.percent2decimal(13), units.percent2decimal(0.5), units.percent2decimal(0.8)]
@@ -29,7 +29,7 @@ t_num = 0
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
 stop = units.mm2m(200)
-step = units.mm2m(1)
+step = units.mm2m(5)
 z_array = np.array(np.arange(units.m2mm(start), units.m2mm(stop + step), units.m2mm(step)))
 
 # изменяющийся параметр для выборок
@@ -85,8 +85,8 @@ for matrix in matrixes:
 
         one_wave_plotter = OneWavePlotter(field, aperture, z, saver)
         # one_wave_plotter.save_aperture_bound(100)
-        # one_wave_plotter.save_phase()
-        # one_wave_plotter.save_intensity()
+        one_wave_plotter.save_phase()
+        one_wave_plotter.save_intensity()
 
         ic(r)
         wave_array.append(field)

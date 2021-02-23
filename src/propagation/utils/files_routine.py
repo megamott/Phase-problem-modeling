@@ -4,11 +4,12 @@ import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from skimage.restoration import unwrap_phase
 
-from src.propagation.model.configuration.interface.saver import Saver
-from src.propagation.model.waves.interface.wave import Wave
-from src.propagation.model.areas.interface.aperture import Aperture
-from src.propagation.utils.math.general import get_slice, calc_amplitude
-from src.propagation.utils.math import units
+from ..model.configuration.interface.saver import Saver
+from ..model.waves.interface.wave import Wave
+from ..model.areas.interface.aperture import Aperture
+from ..utils.math.general import get_slice
+from ..utils.math.general import calc_amplitude
+from ..utils.math import units
 
 
 # сохранение изображения неразвернутой и развернутой фаз

@@ -1,9 +1,9 @@
 from abc import abstractmethod
 import numpy as np
 
-from src.propagation.model.areas.interface.aperture import Aperture
-from src.propagation.model.areas.interface.area import Area
-from src.propagation.model.propagation.interface.propagate import Propagable
+from ...areas.interface.aperture import Aperture
+from ...areas.interface.area import Area
+from ...propagation.interface.propagate import Propagable
 
 
 # интерфейс волны

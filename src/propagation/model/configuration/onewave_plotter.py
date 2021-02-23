@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.propagation.model.areas.interface.aperture import Aperture
-from src.propagation.model.configuration.interface.plotter import Plotter
-from src.propagation.model.configuration.interface.saver import Saver
-from src.propagation.model.waves.interface.wave import Wave
-from src.propagation.utils.math import units
+from ..areas.interface.aperture import Aperture
+from ..configuration.interface.plotter import Plotter
+from ..configuration.interface.saver import Saver
+from ..waves.interface.wave import Wave
+from ...utils.math import units
 
 
 class OneWavePlotter(Plotter):
@@ -21,10 +21,10 @@ class OneWavePlotter(Plotter):
         gaussian_width_param = self.__wave.gaussian_width_param
         k = 2 * np.pi / self.__wave.wavelength
 
-        unwrapped_phase_lbl = f'[{np.min(self.__wave.get_unwrapped_phase(self.__aperture)):.2f}, ' \
-                              f'{np.max(self.__wave.get_unwrapped_phase(self.__aperture)):.2f}] rad; ' \
-                              f'[{np.min(self.__wave.get_unwrapped_phase(self.__aperture)) * 1e+6 / k:.1f}, ' \
-                              f'{np.max(self.__wave.get_unwrapped_phase(self.__aperture)) * 1e+6 / k:.1f}] um'
+        unwrapped_phase_lbl = f'[{np.min(self.__wave.get_unwrapped_phase(self.__aperture)[0]):.2f}, ' \
+                              f'{np.max(self.__wave.get_unwrapped_phase(self.__aperture)[0]):.2f}] rad; ' \
+                              f'[{np.min(self.__wave.get_unwrapped_phase(self.__aperture)[0]) * 1e+6 / k:.1f}, ' \
+                              f'{np.max(self.__wave.get_unwrapped_phase(self.__aperture)[0]) * 1e+6 / k:.1f}] um'
 
         wrapped_phase_lbl = f'z: {units.m2mm(self.__z):.1f} mm; R: {self.__wave.get_wavefront_radius(self.__aperture):.3f} mm'
 

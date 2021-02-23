@@ -65,7 +65,7 @@ class SphericalWave(Wave):
 
             return unwrap_phase(self.__phase * aperture.aperture), aperture
         else:
-            return unwrap_phase(self.__phase)
+            return unwrap_phase(self.__phase), aperture
 
     def __modify_aperture(self, aperture: Aperture):
         """

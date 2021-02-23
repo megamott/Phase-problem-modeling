@@ -1,7 +1,7 @@
-from src.propagation.model.areas.interface.aperture import Aperture
-from src.propagation.model.areas.radial_area import RadialArea
-from src.propagation.utils.optic.field import circ
-from src.propagation.utils.math import units
+from ..areas.interface.aperture import Aperture
+from ..areas.radial_area import RadialArea
+from ...utils.optic.field import circ
+from ...utils.math import units
 
 
 # класс апертуры, circ
