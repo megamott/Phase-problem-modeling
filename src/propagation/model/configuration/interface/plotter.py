@@ -205,8 +205,8 @@ class Plotter(ABC):
         """
 
         wrp_phase_x_slice_x, wrp_phase_x_slice_y = get_slice(
-            wave.phase,
-            wave.phase.shape[0] // 2,
+            wave.__phase,
+            wave.__phase.shape[0] // 2,
             xslice=True
         )
         ap_x_slice_x, ap_x_slice_y = get_slice(
@@ -237,7 +237,7 @@ class Plotter(ABC):
         """
 
         return (z, wave.get_wavefront_radius(aperture)) + \
-               (z, np.abs(z - units.m2mm(wave.focal_len)))
+               (z, np.abs(z - units.m2mm(wave._focal_len)))
 
 
 

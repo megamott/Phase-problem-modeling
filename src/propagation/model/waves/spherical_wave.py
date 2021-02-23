@@ -2,44 +2,50 @@ from icecream import ic
 from numpy.fft import fft2, fftshift, ifft2
 from skimage.restoration import unwrap_phase
 
-from src.propagation.model.areas.radial_aperture import RadialAperture
-from src.propagation.model.areas.radial_area import RadialArea
-from src.propagation.utils.math import units
-from src.propagation.model.waves.interface.wave import Wave
-from src.propagation.model.areas.interface.aperture import Aperture
-from src.propagation.model.areas.interface.area import Area
-from src.propagation.utils.optic.field import *
-from src.propagation.utils.math.general import *
+from ..areas.radial_aperture import RadialAperture
+from ..areas.radial_area import RadialArea
+from ...utils.math import units
+from ...model.waves.interface.wave import Wave
+from ...model.areas.interface.aperture import Aperture
+from ...model.areas.interface.area import Area
+from ...utils.optic.field import *
+from ...utils.math.general import *
 
 
 # класс волны со сферической аберрацией или сходящейся сферической волны
 class SphericalWave(Wave):
 
-    def __init__(self, ar: Area, focal_len: float, gaussian_width_param: int, wavelength: float, distance: float):
+    def __init__(self, area: Area, focal_len: float, gaussian_width_param: int, wavelength: float, distance: float):
         """
         Создание распределения поля на двухмерной координатной сетке
-        :param ar: двухмерная координатная сетка расчёта распределения поля
+        :param area: двухмерная координатная сетка расчёта распределения поля
         :param focal_len: фокусное расстояние [м]
         :param gaussian_width_param: ширина гауссоиды на уровне интенсивности 1/e^2 [px]
         :param wavelength: длина волны [м]
         :param distance дистанция, на которую распространилась волна из начала координат [м]
         """
-        y_grid_array, x_grid_array = ar.coordinate_grid
-        radius_vector = np.sqrt(x_grid_array ** 2 + y_grid_array ** 2 + focal_len ** 2)
-        # волновой вектор
-        k = 2 * np.pi / wavelength
 
-        self.__gaussian_width_param = gaussian_width_param
-        gaussian_width_param = units.px2m(gaussian_width_param, px_size_m=ar.pixel_size)
-
-        self.__intensity = gauss_2d(x_grid_array, y_grid_array, wx=gaussian_width_param / 4,
-                                    wy=gaussian_width_param / 4)
-        self.__field = np.sqrt(self.__intensity) * np.exp(-1j * k * radius_vector)
-        self.__phase = np.angle(self.__field)
-        self.__wavelength = wavelength
+        self.__area = area
         self.__focal_len = focal_len
-        self.__area = ar
-        self.__z = distance
+        self.__gaussian_width_param = gaussian_width_param
+        self.__wavelength = wavelength
+        self.__distance = distance
+
+        # задание распределения интенсивности волны
+        y_grid, x_grid = self.__area.coordinate_grid
+        gaussian_width_param = units.px2m(gaussian_width_param, px_size_m=area.pixel_size)
+        self.__intensity = gauss_2d(x_grid, y_grid,
+                                    wx=gaussian_width_param / 4,
+                                    wy=gaussian_width_param / 4)
+
+        # волновой вектор
+        k = 2 * np.pi / self.__wavelength
+        # задание распределения комлексной амплитуды поля
+        radius_vector = np.sqrt(x_grid ** 2 + y_grid ** 2 + focal_len ** 2)
+        self.__field = np.sqrt(self.__intensity) * np.exp(-1j * k * radius_vector)
+
+        # задание распределения фазы волны
+        self.__phase = np.angle(self.__field)
 
     def get_wrapped_phase(self, aperture=None) -> np.ndarray:
         if aperture:
@@ -49,55 +55,54 @@ class SphericalWave(Wave):
 
     def get_unwrapped_phase(self, aperture=None):
         if aperture:
+
+            # оптимизация апертуры для правильного разворачивания фазы
+            # второй подоход через свёрнутую фазу
             aperture = self.__modify_aperture(aperture)
+
             return unwrap_phase(self.__phase * aperture.aperture), aperture
         else:
             return unwrap_phase(self.__phase)
 
     def __modify_aperture(self, aperture: Aperture):
-        wrp_phase_x_slice_x, wrp_phase_x_slice_y = get_slice(
+        """
+        Метод модификации апертуры для правильного разворачивания фазы
+        :param aperture: изначальная апертура
+        :return: модифицированная апертура
+        """
+        wrp_phase_values = get_slice(
             self.__phase,
             self.__phase.shape[0] // 2,
-            xslice=True
-        )
-        ap_x_slice_x, ap_x_slice_y = get_slice(
+        )[1]
+
+        ap_values = get_slice(
             aperture.aperture,
             aperture.aperture.shape[0] // 2,
-            xslice=True
-        )
+        )[1]
 
-        ci = 0
+        # Х координата скачка апертуры с 0 на 1
+        jump = next((i for i, v in enumerate(ap_values) if v == 1),
+                    None)
 
-        for i, v in enumerate(ap_x_slice_y):
-            if v == 0:
-                continue
-            else:
-                ci = i
-                break
+        # ближайшая к скачку апертуры координата Х слева от скачка
+        # в кторой значение неразвернутой фазы наиболее близко к нулю
+        lwrp = next((i for i in range(jump, 0, -1) if (wrp_phase_values[i] > 0) and (wrp_phase_values[i - 1] < 0)),
+                    None)
 
-        cib = ci
-        cit = ci
+        # ближайшая к скачку апертуры координата Х справа от скачка
+        # в кторой значение неразвернутой фазы наиболее близко к нулю
+        rwrp = next((i for i in range(jump, 0, -1) if (wrp_phase_values[i] > 0) and (wrp_phase_values[i - 1] < 0)),
+                    None)
 
-        for i in range(ci, 0, -1):
-            if (wrp_phase_x_slice_y[i] > 0) and (wrp_phase_x_slice_y[i - 1] < 0):
-                cib = i
-                break
+        # определение, какая из нулевых координат неразвернутой фазы ближе к скачку
+        jump = rwrp if lwrp - jump > rwrp - jump else lwrp
 
-        for i in range(ci, self.__area.coordinate_grid[0].shape[0]):
-            if (wrp_phase_x_slice_y[i] > 0) and (wrp_phase_x_slice_y[i - 1] < 0):
-                cit = i
-                break
-
-        ci = cit if cib - ci > cit - ci else cib
-
-        if self.__z < self.__focal_len:
-            new_aperture_diameter = (self.__area.coordinate_grid[0].shape[0] // 2 - ci) * 2 + 2
-        else:
-            new_aperture_diameter = (self.__area.coordinate_grid[0].shape[0] // 2 - ci) * 2
-
+        # генерация новой апертуры с скорректированным диаметром
+        # в случае, если волна сходящаяся, вводится дополнительная корректировка
+        new_aperture_diameter = (self.__area.coordinate_grid[0].shape[0] // 2 - jump) * 2
+        new_aperture_diameter += 2 if self.__distance < self.__focal_len else False
         radial_area = RadialArea(self.__area)
         new_aperture = RadialAperture(radial_area, new_aperture_diameter)
-        print(new_aperture)
 
         return new_aperture
 
@@ -106,6 +111,7 @@ class SphericalWave(Wave):
         cut_phase, new_aperture = self.get_unwrapped_phase(aperture=aperture)
 
         # преобразование развернутой фазы для устранения ошибок
+        # первый подход через развернутую фазу
         # mask2 = cut_phase == 0
         # cut_phase[mask2] = np.max(cut_phase)
         # cut_phase -= cut_phase.min()
@@ -118,9 +124,6 @@ class SphericalWave(Wave):
         # определение радиуса кривизны волнового фронта
         ap_diameter = units.m2mm(new_aperture.aperture_diameter)
         wavefront_radius = calculate_radius(sagitta, ap_diameter)
-
-        ic(new_aperture.aperture_diameter)
-        ic(sagitta)
 
         return wavefront_radius
 
@@ -193,8 +196,8 @@ class SphericalWave(Wave):
         return self.__gaussian_width_param
 
     @property
-    def z(self) -> float:
-        return self.__z
+    def distance(self) -> float:
+        return self.__distance
 
     @field.setter
     def field(self, field):
