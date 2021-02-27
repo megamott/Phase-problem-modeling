@@ -140,4 +140,11 @@ class Wave(Propagable):
     def gaussian_width_param(self, gaussian_width_param):
         pass
 
-
+    @property
+    @abstractmethod
+    def distance(self) -> float:
+        """
+        Расстояние распространения волны
+        :return:
+        """
+        pass

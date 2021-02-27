@@ -61,53 +61,11 @@ class SphericalWave(Wave):
 
             # оптимизация апертуры для правильного разворачивания фазы
             # второй подоход через свёрнутую фазу
-            aperture = self.__modify_aperture(aperture)
+            aperture.modify_aperture(self)
 
             return unwrap_phase(self.__phase * aperture.aperture), aperture
         else:
             return unwrap_phase(self.__phase), aperture
-
-    def __modify_aperture(self, aperture: Aperture):
-        """
-        Метод модификации апертуры для правильного разворачивания фазы
-        :param aperture: изначальная апертура
-        :return: модифицированная апертура
-        """
-        wrp_phase_values = get_slice(
-            self.__phase,
-            self.__phase.shape[0] // 2,
-        )[1]
-
-        ap_values = get_slice(
-            aperture.aperture,
-            aperture.aperture.shape[0] // 2,
-        )[1]
-
-        # Х координата скачка апертуры с 0 на 1
-        jump = next((i for i, v in enumerate(ap_values) if v == 1),
-                    None)
-
-        # ближайшая к скачку апертуры координата Х слева от скачка
-        # в кторой значение неразвернутой фазы наиболее близко к нулю
-        lwrp = next((i for i in range(jump, 0, -1) if (wrp_phase_values[i] > 0) and (wrp_phase_values[i - 1] < 0)),
-                    None)
-
-        # ближайшая к скачку апертуры координата Х справа от скачка
-        # в кторой значение неразвернутой фазы наиболее близко к нулю
-        rwrp = next((i for i in range(jump, 0, -1) if (wrp_phase_values[i] > 0) and (wrp_phase_values[i - 1] < 0)),
-                    None)
-
-        # определение, какая из нулевых координат неразвернутой фазы ближе к скачку
-        jump = rwrp if lwrp - jump > rwrp - jump else lwrp
-
-        # генерация новой апертуры с скорректированным диаметром
-        # в случае, если волна сходящаяся, вводится дополнительная корректировка
-        new_aperture_diameter = (self.__area.coordinate_grid[0].shape[0] // 2 - jump) * 2
-        new_aperture_diameter += 2 if self.__distance < self.__focal_len else False
-        radial_area = RadialArea(self.__area)
-        new_aperture = RadialAperture(radial_area, new_aperture_diameter)
-
-        return new_aperture
 
     def get_wavefront_radius(self, aperture: Aperture) -> float:
         # развернутая фаза, обрезанная апертурой
