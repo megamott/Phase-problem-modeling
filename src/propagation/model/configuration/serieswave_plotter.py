@@ -59,5 +59,36 @@ class SeriesWavePlotter(Plotter):
 
         plt.close(fig)
 
-    def save_r_z(self, matrix, step):
-        pass
+    def save_r_z(self, step):
+        fig, ax = plt.subplots(figsize=[8.0, 6.0], dpi=300, facecolor='w', edgecolor='k')
+
+        radius_y = []
+        theory_r_z = []
+
+        for wave, aperture, z in zip(self.__wave_array, self.__aperture_array, self.__z_array):
+            radius_y.append(wave.get_wavefront_radius(aperture))
+            theory_r_z.append(np.abs(np.array(z) - units.m2mm(wave.focal_len)))
+
+        ax.plot(self.__z_array, theory_r_z, label='Theoretical', color='k', markersize=2)
+        ax.plot(self.__z_array, radius_y, '-o', label=f'size: {self.__wave_array[0].area.coordinate_grid[0].shape[0]}',
+                linewidth=1.,
+                markersize=2)
+
+        ax.set_xlim(0, 500)
+        ax.set_ylim(0, theory_r_z[-1])
+
+        plt.xlabel('Propagation distance, mm')
+        plt.ylabel('R(z), mm', )
+        plt.legend()
+        plt.title(f'f\' = {units.m2mm(np.around(self.__wave_array[0].focal_len, decimals=3))} mm; '
+                  f'g = {self.__wave_array[0].gaussian_width_param}; step = {step} mm',
+                  fontsize=14)
+
+        ax.grid(True)
+
+        package_name = 'r(z)'
+        filename = f'trz_f_{int(units.m2mm(np.around(self.__wave_array[0].focal_len, decimals=3)))}_' \
+                   f'g{self.__wave_array[0].gaussian_width_param}_s{self.__wave_array[0].area.coordinate_grid[0].shape[0]}_matrix'
+
+        self.__saver.save_image(fig, package_name, filename)
+

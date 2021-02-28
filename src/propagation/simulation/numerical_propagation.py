@@ -4,6 +4,7 @@ from src.propagation.model.areas.radial_aperture import RadialAperture
 from src.propagation.model.areas.radial_area import RadialArea
 from src.propagation.model.areas.square_area import SquareArea
 from src.propagation.model.configuration.mac_saver import MacSaver
+from src.propagation.model.configuration.multiwave_plotter import MultiWavePlotter
 from src.propagation.model.configuration.onewave_plotter import OneWavePlotter
 from src.propagation.model.configuration.serieswave_plotter import SeriesWavePlotter
 from src.propagation.model.waves.spherical_wave import SphericalWave
@@ -28,12 +29,12 @@ t_num = 0
 
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
-stop = units.mm2m(300)
+stop = units.mm2m(500)
 step = units.mm2m(1)
 z_array = np.array(np.arange(units.m2mm(start), units.m2mm(stop + step), units.m2mm(step)))
 
 # изменяющийся параметр для выборок
-matrixes = np.array([512])
+matrixes = np.array([512, 1024])
 
 # массивы для записи значений циклов
 wave_array = []
@@ -75,34 +76,38 @@ for matrix in matrixes:
         ic(widest_diameter(field.intensity, thresholds[t_num]))
 
         # развернутая апертура
-        up = field.get_unwrapped_phase(aperture=aperture)
+        # up = field.get_unwrapped_phase(aperture=aperture)
 
         # неразвернутая апертура
-        wp = field.get_wrapped_phase(aperture=aperture)
+        # wp = field.get_wrapped_phase(aperture=aperture)
 
         # радиус волнового фронта
         r = field.get_wavefront_radius(aperture)
 
         one_wave_plotter = OneWavePlotter(field, aperture, z, saver)
         # one_wave_plotter.save_aperture_bound(100)
-        one_wave_plotter.save_phase()
-        one_wave_plotter.save_intensity()
+        # one_wave_plotter.save_phase()
+        # one_wave_plotter.save_intensity()
 
         ic(r)
         wave_array.append(field)
         aperture_array.append(aperture)
-        wavefront_radius_array.append(r)
+        # wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
 
     series_wave_plotter = SeriesWavePlotter(wave_array, aperture_array, z_array, saver)
-    # series_wave_plotter.save_aperture_bound(1)
+    # series_wave_plotter.save_r_z(step)
 
     ic()
     array_wave_array.append(wave_array)
     array_aperture_array.append(aperture_array)
     array_of_wavefront_radius_arrays.append(wavefront_radius_array)
     array_of_z_distances.append(z_distances_array)
+    wave_array = []
+    aperture_array = []
 
+multi_wave_plotter = MultiWavePlotter(array_wave_array, array_aperture_array, z_array, matrixes, saver)
+multi_wave_plotter.save_r_z(step)
 
-save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)
+# save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)
 # save_plots(w_arrays + a_arrays, saver)
