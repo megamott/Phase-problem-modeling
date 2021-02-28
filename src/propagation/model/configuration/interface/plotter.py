@@ -39,11 +39,10 @@ class Plotter(ABC):
         pass
 
     @abstractmethod
-    def save_r_z(self, matrix, step):
+    def save_r_z(self, step):
         """
         Сохраняет графики зависимости радиуса волнового фронта от дистанции распространения волны
         :param step:
-        :param matrix: изменяемый параметр в инициализации волны
         :return:
         """
         pass
