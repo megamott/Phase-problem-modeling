@@ -52,6 +52,11 @@ class SphericalWave(Wave):
 
     def get_wrapped_phase(self, aperture=None) -> np.ndarray:
         if aperture:
+
+            # оптимизация апертуры для правильного разворачивания фазы
+            # второй подоход через свёрнутую фазу
+            aperture.modify_aperture(self)
+
             return self.__phase * aperture.aperture
         else:
             return self.__phase

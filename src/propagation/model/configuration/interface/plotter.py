@@ -101,7 +101,7 @@ class Plotter(ABC):
         return fig1
 
     @staticmethod
-    def make_phase_plot(phase, unwrapped=True, geometry_center=False,
+    def make_phase_plot(wrp_phase, uwrp_phase, geometry_center=False,
                         **kwargs):
         """
         Строит график с исчерпывающей информацией о фазе волны
@@ -116,15 +116,7 @@ class Plotter(ABC):
         grid_centering = kwargs.get('grid_centering', False)  # mm
         crosshair_halfwidth = kwargs.get('crosshair_halfwidth', 0)  # mm
 
-        # Свертывание / Развертывание фазы
-        if unwrapped:
-            uwrp_phase = phase
-            wrp_phase = np.angle(np.exp(1j * uwrp_phase))
-        else:
-            wrp_phase = phase
-            uwrp_phase = unwrap_phase(wrp_phase)
-
-        height, width = phase.shape
+        height, width = wrp_phase.shape
 
         # Поиск максимальных по модулю координат для заданного центра: геометрического или энергетического
         if geometry_center:

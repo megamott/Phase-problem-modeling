@@ -29,7 +29,7 @@ class OneWavePlotter(Plotter):
         wrapped_phase_lbl = f'z: {units.m2mm(self.__z):.1f} mm; R: {self.__wave.get_wavefront_radius(self.__aperture):.3f} mm'
 
         fig = super().make_phase_plot(self.__wave.get_wrapped_phase(self.__aperture),
-                                      unwrapped=False, geometry_center=True, linewidth=1,
+                                      self.__wave.get_unwrapped_phase(self.__aperture)[0], geometry_center=True, linewidth=1,
                                       unwrapped_ylims=(-100, 100), unwrapped_phase_lbl=unwrapped_phase_lbl,
                                       wrapped_phase_lbl=wrapped_phase_lbl)
 
