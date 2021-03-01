@@ -21,7 +21,7 @@ saver = MacSaver()
 wavelength = 659.6e-9
 px_size = 5.04e-6
 focal_len = 100e-3
-gaussian_width_param = 248
+gaussian_width_param = 247
 
 # вариации порога определения апертуры
 thresholds = [np.exp(-2), units.percent2decimal(13), units.percent2decimal(0.5), units.percent2decimal(0.8)]
@@ -29,8 +29,8 @@ t_num = 0
 
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
-stop = units.mm2m(500)
-step = units.mm2m(1)
+stop = units.mm2m(200)
+step = units.mm2m(50)
 z_array = np.array(np.arange(units.m2mm(start), units.m2mm(stop + step), units.m2mm(step)))
 
 # изменяющийся параметр для выборок
@@ -95,7 +95,7 @@ for matrix in matrixes:
         # wavefront_radius_array.append(r)
         z_distances_array.append(units.m2mm(z))
 
-    series_wave_plotter = SeriesWavePlotter(wave_array, aperture_array, z_array, saver)
+    series_wave_plotter = SeriesWavePlotter(wave_array, aperture_array, z_array, step, saver)
     # series_wave_plotter.save_r_z(step)
 
     ic()
@@ -106,8 +106,8 @@ for matrix in matrixes:
     wave_array = []
     aperture_array = []
 
-multi_wave_plotter = MultiWavePlotter(array_wave_array, array_aperture_array, z_array, matrixes, saver)
-multi_wave_plotter.save_r_z(step)
+multi_wave_plotter = MultiWavePlotter(array_wave_array, array_aperture_array, z_array, matrixes, step, saver)
+multi_wave_plotter.save_r_z(xlabel='Propagation distance, mm', ylabel='R(z), mm')
 
 # save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)
 # save_plots(w_arrays + a_arrays, saver)

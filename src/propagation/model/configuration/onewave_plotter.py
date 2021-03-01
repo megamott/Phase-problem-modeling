@@ -88,7 +88,7 @@ class OneWavePlotter(Plotter):
 
         plt.close(fig)
 
-    def save_r_z(self, matrix, step):
+    def save_r_z(self):
         """
         Данный метод может быть реализован для серии волна, а не для одной волны
         :return:

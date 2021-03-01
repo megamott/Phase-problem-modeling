@@ -9,6 +9,34 @@ from ....utils.math import units
 from ....utils.math.general import get_slice
 
 
+def configuration(func):
+    def wrapper(*args, **kwargs):
+        title = kwargs.get('title', f'')
+        figsize = kwargs.get('figsize', [8.0, 6.0])
+        dpi = kwargs.get('dpi', 300)
+        line_widths = kwargs.get('linewidths', 3)
+        grid = kwargs.get('grid', True)
+        x_label = kwargs.get('xlabel', 'x')
+        y_label = kwargs.get('ylabel', 'y')
+        y_scale = kwargs.get('yscale', 'linear')
+        facecolor = kwargs.get('facecolor', 'w')
+        edgecolor = kwargs.get('edgecolor', 'k')
+
+        fig, ax = plt.subplots(figsize=figsize,
+                               dpi=dpi,
+                               facecolor=facecolor,
+                               edgecolor=edgecolor)
+
+        ax.grid(grid)
+        plt.yscale(y_scale)
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+
+        func(fig=fig, ax=ax, *args, **kwargs)
+
+    return wrapper
+
+
 class Plotter(ABC):
     """
     Абстрактный класс строителя графиков
@@ -40,10 +68,9 @@ class Plotter(ABC):
         pass
 
     @abstractmethod
-    def save_r_z(self, step):
+    def save_r_z(self):
         """
         Сохраняет графики зависимости радиуса волнового фронта от дистанции распространения волны
-        :param step:
         :return:
         """
         pass

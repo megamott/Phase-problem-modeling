@@ -11,11 +11,12 @@ class SeriesWavePlotter(Plotter):
     Построение графиков для серии прогонок волн в пространстве
     """
 
-    def __init__(self, wave_array: list, aperture_array: list, distances: np.ndarray, saver: Saver):
+    def __init__(self, wave_array: list, aperture_array: list, distances: np.ndarray, step: float, saver: Saver):
         self.__wave_array = wave_array
         self.__aperture_array = aperture_array
         self.__z_array = distances
         self.__saver = saver
+        self.__step = step
 
     def save_phase(self):
         pass
@@ -62,7 +63,7 @@ class SeriesWavePlotter(Plotter):
 
         plt.close(fig)
 
-    def save_r_z(self, step):
+    def save_r_z(self):
         fig, ax = plt.subplots(figsize=[8.0, 6.0], dpi=300, facecolor='w', edgecolor='k')
 
         radius_y = []
@@ -84,7 +85,7 @@ class SeriesWavePlotter(Plotter):
         plt.ylabel('R(z), mm', )
         plt.legend()
         plt.title(f'f\' = {units.m2mm(np.around(self.__wave_array[0].focal_len, decimals=3))} mm; '
-                  f'g = {self.__wave_array[0].gaussian_width_param}; step = {step} mm',
+                  f'g = {self.__wave_array[0].gaussian_width_param}; step = {self.__step} mm',
                   fontsize=14)
 
         ax.grid(True)
