@@ -12,7 +12,7 @@ from src.propagation.utils.files_routine import *
 from src.propagation.utils.math.general import *
 
 # todo интерфейс Saver переписать так, чтобы было удобно пользоваться
-# todo создать класс Plotter
+# todo переделать Plotter
 
 # конфигурация
 saver = MacSaver()
@@ -36,13 +36,9 @@ z_array = np.array(np.arange(units.m2mm(start), units.m2mm(stop + step), units.m
 # изменяющийся параметр для выборок
 matrixes = np.array([512, 1024])
 
-# массивы для записи значений циклов
-wave_array = []
-aperture_array = []
+# массивы для записи значений циклов нескольких прогонок
 array_wave_array = []
 array_aperture_array = []
-array_of_wavefront_radius_arrays = []
-array_of_z_distances = []
 
 # создание волны
 square_area_1 = SquareArea(matrixes[0], matrixes[0], pixel_size=px_size)
@@ -54,60 +50,56 @@ field.field *= aperture.aperture
 for matrix in matrixes:
     ic(matrix)
     matrix_size = matrix
+
+    # матрица в квадратичных координатах
     square_area_1 = SquareArea(matrix_size, matrix_size, pixel_size=px_size)
 
+    # массивы для снапшотов
+    wave_array = []
+    aperture_array = []
+
+    # массивы для одной прогонки
     z_distances_array = []
     wavefront_radius_array = []
 
     for z in np.arange(start, stop + step, step):
-        # синтез апертуры
+        # синтез фиктивной апертуры
         radial_area_1 = RadialArea(square_area_1)
         aperture = RadialAperture(radial_area_1, 2 * gaussian_width_param)
 
-        # создание волны
+        # создание сферической волны
         field = SphericalWave(square_area_1, focal_len, gaussian_width_param, wavelength, z)
         field.field *= aperture.aperture
 
         # распространение волны на дистанцию z
         field.propagate_on_distance(z)
 
-        # преобразование апертуры
+        # определение апертуры для поиска радиуса волнового фронта
         aperture = RadialAperture(radial_area_1, widest_diameter(field.intensity, thresholds[t_num]))
-        ic(widest_diameter(field.intensity, thresholds[t_num]))
 
-        # развернутая апертура
-        # up = field.get_unwrapped_phase(aperture=aperture)
-
-        # неразвернутая апертура
-        # wp = field.get_wrapped_phase(aperture=aperture)
-
-        # радиус волнового фронта
+        # радиус волнового фронта просто для вывода
         r = field.get_wavefront_radius(aperture)
+        ic(r)
 
-        one_wave_plotter = OneWavePlotter(field, aperture, z, saver)
+        # построение графиков для снапшотов
+        # one_wave_plotter = OneWavePlotter(field, aperture, z, saver)
         # one_wave_plotter.save_aperture_bound(100)
         # one_wave_plotter.save_phase()
         # one_wave_plotter.save_intensity()
 
-        ic(r)
         wave_array.append(field)
         aperture_array.append(aperture)
-        # wavefront_radius_array.append(r)
-        z_distances_array.append(units.m2mm(z))
 
+    # построение графиков для одной прогонки
     series_wave_plotter = SeriesWavePlotter(wave_array, aperture_array, z_array, step, saver)
-    # series_wave_plotter.save_r_z(step)
+    series_wave_plotter.save_r_z(xlabel='Propagation distance, mm', ylabel='R(z), mm')
 
     ic()
     array_wave_array.append(wave_array)
     array_aperture_array.append(aperture_array)
-    array_of_wavefront_radius_arrays.append(wavefront_radius_array)
-    array_of_z_distances.append(z_distances_array)
-    wave_array = []
-    aperture_array = []
 
-multi_wave_plotter = MultiWavePlotter(array_wave_array, array_aperture_array, z_array, matrixes, step, saver)
-multi_wave_plotter.save_r_z(xlabel='Propagation distance, mm', ylabel='R(z), mm')
 
-# save_r_z(array_of_z_distances, array_of_wavefront_radius_arrays, matrixes, field, saver, step=step)
-# save_plots(w_arrays + a_arrays, saver)
+# построение графиков для нескольких прогонок
+# multi_wave_plotter = MultiWavePlotter(array_wave_array, array_aperture_array, z_array, matrixes, step, saver)
+# multi_wave_plotter.save_r_z(xlabel='Propagation distance, mm', ylabel='R(z), mm')
+

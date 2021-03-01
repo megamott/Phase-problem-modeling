@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..configuration.interface.plotter import Plotter
+from ..configuration.interface.plotter import Plotter, configuration
 from ..configuration.interface.saver import Saver
 from ...utils.math import units
 
@@ -63,36 +63,50 @@ class SeriesWavePlotter(Plotter):
 
         plt.close(fig)
 
-    def save_r_z(self):
-        fig, ax = plt.subplots(figsize=[8.0, 6.0], dpi=300, facecolor='w', edgecolor='k')
+    @configuration
+    def save_r_z(self, fig, ax, *args, **kwargs):
+        """
+        График сохранения зависимости радиуса кривизны волнового фронта от расстояния распространения волны
+        :param fig:
+        :param ax:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        marker = '-o'  # вид маркера линий
+        markersize = kwargs.get('markersize', 2)  # размер марера линий
+        linewidth = kwargs.get('linewidth', 1.)  # толщина линии графика реальных радиусов
 
+        # определение реальных и теоретических радиусов кривизны волн и построение их графиков
         radius_y = []
         theory_r_z = []
-
         for wave, aperture, z in zip(self.__wave_array, self.__aperture_array, self.__z_array):
             radius_y.append(wave.get_wavefront_radius(aperture))
             theory_r_z.append(np.abs(np.array(z) - units.m2mm(wave.focal_len)))
 
-        ax.plot(self.__z_array, theory_r_z, label='Theoretical', color='k', markersize=2)
-        ax.plot(self.__z_array, radius_y, '-o', label=f'size: {self.__wave_array[0].area.coordinate_grid[0].shape[0]}',
-                linewidth=1.,
-                markersize=2)
+        ax.plot(self.__z_array, theory_r_z,
+                label='Theoretical',
+                color='k',
+                markersize=markersize)
+        ax.plot(self.__z_array, radius_y,
+                marker,
+                label=f'size: {self.__wave_array[0].area.coordinate_grid[0].shape[0]}',
+                linewidth=linewidth,
+                markersize=markersize)
 
+        #  определение масштаба графиков
         ax.set_xlim(0, 500)
         ax.set_ylim(0, theory_r_z[-1])
 
-        plt.xlabel('Propagation distance, mm')
-        plt.ylabel('R(z), mm', )
-        plt.legend()
         plt.title(f'f\' = {units.m2mm(np.around(self.__wave_array[0].focal_len, decimals=3))} mm; '
                   f'g = {self.__wave_array[0].gaussian_width_param}; step = {self.__step} mm',
                   fontsize=14)
+        plt.legend()
 
-        ax.grid(True)
-
+        #  сохранение графиков
         package_name = 'r(z)'
         filename = f'trz_f_{int(units.m2mm(np.around(self.__wave_array[0].focal_len, decimals=3)))}_' \
                    f'g{self.__wave_array[0].gaussian_width_param}_s{self.__wave_array[0].area.coordinate_grid[0].shape[0]}_matrix'
-
         self.__saver.save_image(fig, package_name, filename)
 
+        plt.close(fig)
