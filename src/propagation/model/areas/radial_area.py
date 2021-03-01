@@ -6,6 +6,9 @@ from src.propagation.utils.math import units
 
 
 class RadialArea(Area):
+    """
+     Сетка в радиальных координатах
+    """
 
     def __init__(self, square_area: SquareArea):
         """

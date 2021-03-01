@@ -12,6 +12,7 @@ from ..utils.math.general import calc_amplitude
 from ..utils.math import units
 
 
+# DEPRECATED
 # сохранение изображения неразвернутой и развернутой фаз
 def save_phase(z: float, wave: Wave, unwrapped_phase: np.ndarray, phase_z, wavefront_radius: float, saver: Saver):
     focus = wave.focal_len

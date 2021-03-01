@@ -9,6 +9,9 @@ from ...utils.math import units
 
 
 class OneWavePlotter(Plotter):
+    """
+    Построение графиков одной прогонки волны в пространстве
+    """
 
     def __init__(self, wave: Wave, aperture: Aperture, distance: float, saver: Saver):
         self.__wave = wave

@@ -7,6 +7,10 @@ from ...utils.math import units
 
 
 class MultiWavePlotter(Plotter):
+    """
+    Построение графиков для нескольких серий прогонок волн в пространстве,
+    для которых волны отличаются по определенному параметру
+    """
 
     def __init__(self, wave_array: list, aperture_array: list, distances: np.ndarray, matrix: np.ndarray, saver: Saver):
         self.__array_wave_array = wave_array

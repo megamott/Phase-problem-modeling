@@ -4,8 +4,10 @@ from matplotlib.figure import Figure
 from ...waves.interface.wave import Wave
 
 
-# интерфейс для сохранения файлов в папку
 class Saver(ABC):
+    """
+    Интерфейс сохранения файлов в папку
+    """
 
     @abstractmethod
     def save_image(self, fig: Figure, package_name: str, filename: str):

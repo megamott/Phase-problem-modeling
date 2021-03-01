@@ -7,6 +7,9 @@ from ...utils.math import units
 
 
 class SeriesWavePlotter(Plotter):
+    """
+    Построение графиков для серии прогонок волн в пространстве
+    """
 
     def __init__(self, wave_array: list, aperture_array: list, distances: np.ndarray, saver: Saver):
         self.__wave_array = wave_array

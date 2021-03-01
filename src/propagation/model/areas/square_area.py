@@ -4,8 +4,10 @@ from ..areas.interface.area import Area
 from ...utils.math import units
 
 
-# класс квадратной координатной сетки или квадратной матрицы
 class SquareArea(Area):
+    """
+    Сетка в квадратичных координатах (квадратная матрица)
+    """
 
     def __init__(self, height, width, pixel_size=5.04e-6):
         """
@@ -29,22 +31,24 @@ class SquareArea(Area):
     def pixel_size(self) -> float:
         return self.__pixel_size
 
+    @pixel_size.setter
+    def pixel_size(self, pixel_size):
+        self.__pixel_size = pixel_size
+
     @property
     def height(self) -> float:
         return self.__height
-
-    @property
-    def width(self) -> float:
-        return self.__width
 
     @height.setter
     def height(self, height):
         self.__height = height
 
+    @property
+    def width(self) -> float:
+        return self.__width
+
     @width.setter
     def width(self, width):
         self.__width = width
 
-    @pixel_size.setter
-    def pixel_size(self, pixel_size):
-        self.__pixel_size = pixel_size
+

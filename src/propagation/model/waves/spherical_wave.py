@@ -1,22 +1,20 @@
-from icecream import ic
 import numpy as np
 from numpy.fft import fft2, fftshift, ifft2
 from skimage.restoration import unwrap_phase
 
-from ..areas.radial_aperture import RadialAperture
-from ..areas.radial_area import RadialArea
-from ...utils.math import units
-from ...model.waves.interface.wave import Wave
 from ...model.areas.interface.aperture import Aperture
 from ...model.areas.interface.area import Area
-from ...utils.optic.field import gauss_2d
-from ...utils.math.general import get_slice
+from ...model.waves.interface.wave import Wave
+from ...utils.math import units
 from ...utils.math.general import calc_amplitude
 from ...utils.math.general import calculate_radius
+from ...utils.optic.field import gauss_2d
 
 
-# класс волны со сферической аберрацией или сходящейся сферической волны
 class SphericalWave(Wave):
+    """
+    Волны со сферической аберрацией или сходящейся сферической волны
+    """
 
     def __init__(self, area: Area, focal_len: float, gaussian_width_param: int, wavelength: float, distance: float):
         """
@@ -94,6 +92,12 @@ class SphericalWave(Wave):
         return wavefront_radius
 
     def propagate_on_distance(self, z: float, method='angular_spectrum'):
+        """
+        Фабрика для выбора метода распространения волн
+        :param z:
+        :param method:
+        :return:
+        """
         if method == 'angular_spectrum':
             self.__angular_spectrum_propagation(z)
 
@@ -137,58 +141,68 @@ class SphericalWave(Wave):
     def field(self) -> np.ndarray:
         return self.__field
 
-    @property
-    def area(self) -> Area:
-        return self.__area
-
-    @property
-    def phase(self) -> np.ndarray:
-        return np.angle(self.__field)
-
-    @property
-    def intensity(self) -> np.ndarray:
-        return np.abs(self.__field) ** 2
-
-    @property
-    def wavelength(self) -> float:
-        return self.__wavelength
-
-    @property
-    def focal_len(self) -> float:
-        return self.__focal_len
-
-    @property
-    def gaussian_width_param(self) -> float:
-        return self.__gaussian_width_param
-
-    @property
-    def distance(self) -> float:
-        return self.__distance
-
     @field.setter
     def field(self, field):
         self.__field = field
+
+    @property
+    def area(self) -> Area:
+        return self.__area
 
     @area.setter
     def area(self, area):
         self.__area = area
 
-    @wavelength.setter
-    def wavelength(self, wavelength):
-        self.__wavelength = wavelength
+    @property
+    def phase(self) -> np.ndarray:
+        return np.angle(self.__field)
 
-    @gaussian_width_param.setter
-    def gaussian_width_param(self, gaussian_width_param):
-        self.__gaussian_width_param = gaussian_width_param
+    @phase.setter
+    def phase(self, phase):
+        self.__phase = phase
 
-    @focal_len.setter
-    def focal_len(self, focal_len):
-        self.__focal_len = focal_len
+    @property
+    def intensity(self) -> np.ndarray:
+        return np.abs(self.__field) ** 2
 
     @intensity.setter
     def intensity(self, intensity):
         self.__intensity = intensity
 
-    @phase.setter
-    def phase(self, phase):
-        self.__phase = phase
+    @property
+    def wavelength(self) -> float:
+        return self.__wavelength
+
+    @wavelength.setter
+    def wavelength(self, wavelength):
+        self.__wavelength = wavelength
+
+    @property
+    def focal_len(self) -> float:
+        return self.__focal_len
+
+    @focal_len.setter
+    def focal_len(self, focal_len):
+        self.__focal_len = focal_len
+
+    @property
+    def gaussian_width_param(self) -> float:
+        return self.__gaussian_width_param
+
+    @gaussian_width_param.setter
+    def gaussian_width_param(self, gaussian_width_param):
+        self.__gaussian_width_param = gaussian_width_param
+
+    @property
+    def distance(self) -> float:
+        return self.__distance
+
+
+
+
+
+
+
+
+
+

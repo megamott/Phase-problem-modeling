@@ -30,3 +30,7 @@ def rect_1d(x, a=1., w=1., x0=0.):
 
 def circ(r, a=1., w=1., r0=0.):
     return a * rect_1d(r, w=w, x0=r0)
+
+
+def circ_cartesian(x, y, a=1., w=1., x0=0., y0=0.):
+    return a * ((np.sqrt((x - x0)**2 + (y - y0)**2) / w) < 0.5)

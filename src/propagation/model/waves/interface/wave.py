@@ -6,8 +6,10 @@ from ...areas.interface.area import Area
 from ...propagation.interface.propagate import Propagable
 
 
-# интерфейс волны
 class Wave(Propagable):
+    """
+    Интерфейс волны
+    """
 
     @abstractmethod
     def get_wrapped_phase(self, aperture=None) -> np.ndarray:
@@ -125,7 +127,8 @@ class Wave(Propagable):
     def focal_len(self, focal_len):
         pass
 
-    # данный метод нужно убрать, так как не у всех волн в профиле интенсивности гауссоида
+    # данный метод в дальнейшем нужно изменить на более общий,
+    # так как не у всех волн в профиле интенсивности гауссоида
     @property
     @abstractmethod
     def gaussian_width_param(self) -> float:

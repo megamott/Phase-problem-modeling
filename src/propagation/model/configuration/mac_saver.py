@@ -7,6 +7,9 @@ from ...utils.math import units
 
 
 class MacSaver(Saver):
+    """
+    Сохранение файлов в MacBook Матвей
+    """
 
     def save_image(self, fig: Figure, package_name: str, filename: str):
         filepath = f"/Users/megamot/Programming/Python/TIE_objects/data/images/{package_name}/{filename}"

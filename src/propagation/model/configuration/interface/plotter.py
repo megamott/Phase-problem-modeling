@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from skimage.restoration import unwrap_phase
 
 from ...areas.interface.aperture import Aperture
 from ...waves.interface.wave import Wave
@@ -10,8 +9,10 @@ from ....utils.math import units
 from ....utils.math.general import get_slice
 
 
-# абстрактный класс строителя графиков
 class Plotter(ABC):
+    """
+    Абстрактный класс строителя графиков
+    """
 
     @abstractmethod
     def save_phase(self):
@@ -226,9 +227,5 @@ class Plotter(ABC):
         Создаёт зависимость радиуса кривизны волнового фронта от расстояния
         :return:
         """
-
         return (z, wave.get_wavefront_radius(aperture)) + \
                (z, np.abs(z - units.m2mm(wave.focal_len)))
-
-
-

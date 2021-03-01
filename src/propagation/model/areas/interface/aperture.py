@@ -20,7 +20,7 @@ class Aperture(ABC):
     @abstractmethod
     def aperture_diameter(self) -> float:
         """
-        Размер апертуры
+        Диаметр апертуры
         :return:
         """
         pass
@@ -28,4 +28,9 @@ class Aperture(ABC):
     @aperture_diameter.setter
     @abstractmethod
     def aperture_diameter(self, aperture_diameter):
+        """
+        Изменение диаметра апертуры
+        :param aperture_diameter:
+        :return:
+        """
         pass

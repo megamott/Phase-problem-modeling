@@ -1,5 +1,3 @@
-import numpy as np
-
 from ..areas.interface.aperture import Aperture
 from ..areas.radial_area import RadialArea
 from ..waves.interface.wave import Wave
@@ -8,8 +6,10 @@ from ...utils.optic.field import circ
 from ...utils.math import units
 
 
-# класс апертуры, circ
 class RadialAperture(Aperture):
+    """
+    Апертура, circ
+    """
 
     def __init__(self, radial_area: RadialArea, aperture_diameter: float):
         """
@@ -25,7 +25,7 @@ class RadialAperture(Aperture):
     def modify_aperture(self, wave: Wave):
         """
         Метод модификации апертуры для правильного разворачивания фазы
-        :param wave: волны
+        :param wave: волна для корректировки диаметра апертуры
         :return: модифицированная апертура
         """
         wrp_phase_values = get_slice(
@@ -66,6 +66,11 @@ class RadialAperture(Aperture):
     def aperture_diameter(self):
         return self.__aperture_diameter
 
+    @aperture_diameter.setter
+    def aperture_diameter(self, aperture_diameter):
+        self.__aperture_diameter = units.px2m(aperture_diameter, px_size_m=self.__radial_area.pixel_size)  # [м]
+        self.__aperture = circ(self.radial_area.coordinate_grid, w=self.__aperture_diameter)
+
     @property
     def radial_area(self):
         return self.__radial_area
@@ -74,7 +79,4 @@ class RadialAperture(Aperture):
     def aperture(self):
         return self.__aperture
 
-    @aperture_diameter.setter
-    def aperture_diameter(self, aperture_diameter):
-        self.__aperture_diameter = units.px2m(aperture_diameter, px_size_m=self.__radial_area.pixel_size)  # [м]
-        self.__aperture = circ(self.radial_area.coordinate_grid, w=self.__aperture_diameter)
+
