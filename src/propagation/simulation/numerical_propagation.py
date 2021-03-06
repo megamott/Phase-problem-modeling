@@ -15,13 +15,16 @@ from src.propagation.utils.math.general import *
 # todo переделать Plotter
 
 # конфигурация
+from src.propagation.utils.optic.propagation_methods import angular_spectrum_bl_propagation, \
+    angular_spectrum_propagation
+
 saver = MacSaver()
 
 # основные параметры для синтеза волны
 wavelength = 659.6e-9
 px_size = 5.04e-6
-focal_len = 100e-3
-gaussian_width_param = 247
+focal_len = 200e-3
+gaussian_width_param = 250
 
 # вариации порога определения апертуры
 thresholds = [np.exp(-2), units.percent2decimal(13), units.percent2decimal(0.5), units.percent2decimal(0.8)]
@@ -29,12 +32,12 @@ t_num = 0
 
 # параметры для итерации при рапространении волны
 start = units.mm2m(0)
-stop = units.mm2m(200)
-step = units.mm2m(50)
+stop = units.mm2m(600)
+step = units.mm2m(10)
 z_array = np.array(np.arange(units.m2mm(start), units.m2mm(stop + step), units.m2mm(step)))
 
 # изменяющийся параметр для выборок
-matrixes = np.array([512, 1024])
+matrixes = np.array([512])
 
 # массивы для записи значений циклов нескольких прогонок
 array_wave_array = []
@@ -72,7 +75,7 @@ for matrix in matrixes:
         field.field *= aperture.aperture
 
         # распространение волны на дистанцию z
-        field.propagate_on_distance(z)
+        field.propagate_on_distance(z, method=angular_spectrum_bl_propagation)
 
         # определение апертуры для поиска радиуса волнового фронта
         aperture = RadialAperture(radial_area_1, widest_diameter(field.intensity, thresholds[t_num]))

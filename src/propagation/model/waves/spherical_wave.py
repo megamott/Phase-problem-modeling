@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.fft import fft2, fftshift, ifft2
 from skimage.restoration import unwrap_phase
 
 from ...model.areas.interface.aperture import Aperture
@@ -9,6 +8,7 @@ from ...utils.math import units
 from ...utils.math.general import calc_amplitude
 from ...utils.math.general import calculate_radius
 from ...utils.optic.field import gauss_2d
+from ...utils.optic.propagation_methods import angular_spectrum_propagation
 
 
 class SphericalWave(Wave):
@@ -91,51 +91,8 @@ class SphericalWave(Wave):
 
         return wavefront_radius
 
-    def propagate_on_distance(self, z: float, method='angular_spectrum'):
-        """
-        Фабрика для выбора метода распространения волн
-        :param z:
-        :param method:
-        :return:
-        """
-        if method == 'angular_spectrum':
-            self.__angular_spectrum_propagation(z)
-
-    def __angular_spectrum_propagation(self, z: float):
-        """
-        Метод распространения (преобразования) волны методом углового спектра
-        :param z: дистанция распространения
-        :return:
-        """
-
-        height = self.__field.shape[0]  # количество строк матрицы
-        width = self.__field.shape[1]  # количество элеметов в каждой строке матрицы
-
-        # волновое число
-        wave_number = 2 * np.pi / self.__wavelength
-
-        # создание сетки в частотной области при условии выполнения теоремы Котельникова
-        nu_x = np.arange(-width / 2, width / 2) / (width * self.__area.pixel_size)
-        nu_y = np.arange(-height / 2, height / 2) / (height * self.__area.pixel_size)
-        nu_x_grid, nu_y_grid = np.meshgrid(nu_x, nu_y)
-
-        # сдвиг высоких частот к краям сетки
-        nu_x_grid, nu_y_grid = fftshift(nu_x_grid), fftshift(nu_y_grid)
-
-        # Фурье-образ исходного поля
-        field = fft2(self.__field)
-
-        # передаточная функция слоя пространства
-        exp_term = np.sqrt(
-            1 - (self.__wavelength * nu_x_grid) ** 2 -
-            (self.__wavelength * nu_y_grid) ** 2)
-        h = np.exp(1j * wave_number * z * exp_term)
-
-        # обратное преобразование Фурье
-        self.__field = ifft2(field * h)
-
-        self.__phase = np.angle(self.__field)
-        self.__intensity = np.abs(self.__field) ** 2
+    def propagate_on_distance(self, z: float, method=angular_spectrum_propagation):
+        method(self, z)
 
     @property
     def field(self) -> np.ndarray:
@@ -196,13 +153,3 @@ class SphericalWave(Wave):
     @property
     def distance(self) -> float:
         return self.__distance
-
-
-
-
-
-
-
-
-
-
