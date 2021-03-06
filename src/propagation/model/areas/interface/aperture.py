@@ -2,8 +2,10 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-# интерфейс апертуры
 class Aperture(ABC):
+    """
+    Интерфейс апертур
+    """
 
     @property
     @abstractmethod

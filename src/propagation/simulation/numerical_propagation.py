@@ -4,19 +4,15 @@ from src.propagation.model.areas.radial_aperture import RadialAperture
 from src.propagation.model.areas.radial_area import RadialArea
 from src.propagation.model.areas.square_area import SquareArea
 from src.propagation.model.configuration.mac_saver import MacSaver
-from src.propagation.model.configuration.multiwave_plotter import MultiWavePlotter
-from src.propagation.model.configuration.onewave_plotter import OneWavePlotter
 from src.propagation.model.configuration.serieswave_plotter import SeriesWavePlotter
 from src.propagation.model.waves.spherical_wave import SphericalWave
 from src.propagation.utils.files_routine import *
 from src.propagation.utils.math.general import *
+# конфигурация
+from src.propagation.utils.optic.propagation_methods import angular_spectrum_bl_propagation
 
 # todo интерфейс Saver переписать так, чтобы было удобно пользоваться
 # todo переделать Plotter
-
-# конфигурация
-from src.propagation.utils.optic.propagation_methods import angular_spectrum_bl_propagation, \
-    angular_spectrum_propagation
 
 saver = MacSaver()
 

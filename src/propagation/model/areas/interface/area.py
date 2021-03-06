@@ -2,8 +2,10 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-# интерфейс координатной сетки
 class Area(ABC):
+    """
+    Интерфейс координатной сетки
+    """
 
     @property
     @abstractmethod

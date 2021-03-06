@@ -10,6 +10,12 @@ from ....utils.math.general import get_slice
 
 
 def configuration(func):
+    """
+    Конфигуратор функций построения графиков свойствами графиков
+    :param func: функция построения для конфигурирования
+    :return:
+    """
+
     def wrapper(*args, **kwargs):
         title = kwargs.get('title', f'')
         figsize = kwargs.get('figsize', [8.0, 6.0])
