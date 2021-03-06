@@ -17,10 +17,8 @@ def configuration(func):
     """
 
     def wrapper(*args, **kwargs):
-        title = kwargs.get('title', f'')
         figsize = kwargs.get('figsize', [8.0, 6.0])
         dpi = kwargs.get('dpi', 300)
-        line_widths = kwargs.get('linewidths', 3)
         grid = kwargs.get('grid', True)
         x_label = kwargs.get('xlabel', 'x')
         y_label = kwargs.get('ylabel', 'y')

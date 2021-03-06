@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ..areas.interface.aperture import Aperture
-from ..configuration.interface.plotter import Plotter
+from ..configuration.interface.plotter import Plotter, configuration
 from ..configuration.interface.saver import Saver
 from ..waves.interface.wave import Wave
 from ...utils.math import units
@@ -14,12 +14,22 @@ class OneWavePlotter(Plotter):
     """
 
     def __init__(self, wave: Wave, aperture: Aperture, distance: float, saver: Saver):
+        """
+        :param wave: снапшот волны - волна, распространившаяся на расстояние distance
+        :param aperture: апертура для данной волны
+        :param distance: координата распространения
+        :param saver: класс, сохраняющий графики
+        """
         self.__wave = wave
         self.__aperture = aperture
         self.__z = distance
         self.__saver = saver
 
     def save_phase(self):
+        """
+        Сохраняет график для фазы
+        :return:
+        """
         focus = self.__wave.focal_len
         gaussian_width_param = self.__wave.gaussian_width_param
         k = 2 * np.pi / self.__wave.wavelength
@@ -45,6 +55,10 @@ class OneWavePlotter(Plotter):
         plt.close(fig)
 
     def save_intensity(self):
+        """
+        Сохраняет график для интенсивности
+        :return:
+        """
         fig = super().make_intensity_plot(self.__wave.intensity)
 
         package_name = f'intensity/intensity_f{int(units.m2mm(np.around(self.__wave.focal_len, decimals=3)))}_' \
@@ -55,16 +69,16 @@ class OneWavePlotter(Plotter):
 
         plt.close(fig)
 
-    def save_aperture_bound(self, bound, **kwargs):
-        dpi = kwargs.get('dpi', 300)
-        line_widths = kwargs.get('linewidths', 3)
-        labels = kwargs.get('labels', [])
-        grid = kwargs.get('grid', True)
-        x_label = kwargs.get('xlabel', 'x')
-        y_label = kwargs.get('ylabel', 'y')
-        y_scale = kwargs.get('yscale', 'linear')
-
-        fig, ax = plt.subplots(figsize=[10.0, 8.0], dpi=dpi)
+    @configuration
+    def save_aperture_bound(self, fig, ax, bound: float = 2, **kwargs):
+        """
+        Сохраняет график для соответствия скачка аперутры и фазы в конкретный момент
+        :param fig:
+        :param ax:
+        :param bound:
+        :param kwargs:
+        :return:
+        """
 
         data = super()._make_aperture_bound_dependency(self.__wave, self.__aperture, bound)
 
@@ -74,13 +88,9 @@ class OneWavePlotter(Plotter):
                                 f'D: {self.__aperture.aperture_diameter}')
 
         plt.legend(loc='upper right')
-        ax.grid(grid)
         plt.title(f'f\' = {units.m2mm(np.around(self.wave.focal_len, decimals=3))} mm; '
                   f'g = {self.wave.gaussian_width_param}',
                   fontsize=14)
-        plt.xlabel(x_label)
-        plt.ylabel(y_label)
-        plt.yscale(y_scale)
 
         package_name = self.__saver.create_package_name('b')
         filename = self.__saver.create_filename(self.__wave, 'bound', z=self.__z)
@@ -91,6 +101,7 @@ class OneWavePlotter(Plotter):
     def save_r_z(self):
         """
         Данный метод может быть реализован для серии волна, а не для одной волны
+        Пользуйся функций из SeriesWavePlotter
         :return:
         """
         pass

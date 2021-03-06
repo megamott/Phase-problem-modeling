@@ -20,7 +20,7 @@ class MultiWavePlotter(Plotter):
         :param distances: координаты снапшотов волн
         :param matrix: изменяющийся для прогонок параметр
         :param step: шаг прогонок
-        :param saver: класс, сохраняющий волны
+        :param saver: класс, сохраняющий графики
         """
         self.__array_wave_array = wave_array
         self.__array_aperture_array = aperture_array
@@ -30,12 +30,25 @@ class MultiWavePlotter(Plotter):
         self.__step = step
 
     def save_phase(self):
+        """
+        Пользоваться данной функцией для одиночной волны из OneWavePlotter
+        :return:
+        """
         ...
 
     def save_intensity(self):
+        """
+        Пользоваться данной функцией для одиночной волны из OneWavePlotter
+        :return:
+        """
         ...
 
     def save_aperture_bound(self, bound: float):
+        """
+        Пользоваться данной функций для серии волн или для одной волны из SeriesWavePlotter или OneWavePlotter
+        :param bound:
+        :return:
+        """
         ...
 
     @configuration

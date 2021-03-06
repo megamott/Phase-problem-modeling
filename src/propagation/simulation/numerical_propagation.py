@@ -91,7 +91,8 @@ for matrix in matrixes:
 
     # построение графиков для одной прогонки
     series_wave_plotter = SeriesWavePlotter(wave_array, aperture_array, z_array, step, saver)
-    series_wave_plotter.save_r_z(xlabel='Propagation distance, mm', ylabel='R(z), mm')
+    # series_wave_plotter.save_r_z(xlabel='Propagation distance, mm', ylabel='R(z), mm')
+    series_wave_plotter.save_aperture_bound(bound=2)
 
     ic()
     array_wave_array.append(wave_array)
