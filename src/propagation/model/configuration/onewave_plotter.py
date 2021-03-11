@@ -92,7 +92,7 @@ class OneWavePlotter(Plotter):
                   f'g = {self.wave.gaussian_width_param}',
                   fontsize=14)
 
-        package_name = self.__saver.create_package_name('b')
+        package_name = self.__saver.create_folder_name('b')
         filename = self.__saver.create_filename(self.__wave, 'bound', z=self.__z)
         self.__saver.save_image(fig, package_name, filename)
 

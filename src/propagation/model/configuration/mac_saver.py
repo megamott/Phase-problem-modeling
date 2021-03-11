@@ -25,7 +25,7 @@ class MacSaver(Saver):
                f'{f"{it}.png" if it else ".png"}'
 
     @staticmethod
-    def create_package_name(method: str, wave=False) -> str:
+    def create_folder_name(method: str, wave=False) -> str:
         plot_package = {'i': 'intensity',
                         'p': 'phase',
                         'r': 'r(z)',

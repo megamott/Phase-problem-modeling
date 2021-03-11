@@ -33,7 +33,7 @@ class Saver(ABC):
 
     @staticmethod
     @abstractmethod
-    def create_package_name(method: str) -> str:
+    def create_folder_name(method: str) -> str:
         """
         Создаёт имя пакаета по указанному типу графика
         :param method: тип графика
