@@ -1,4 +1,5 @@
-# TIE <br/>
+# Object-oriented modeling of the phase problem of optics: algorithm, capabilities and limitations <br/>
+In recent years, the intensity transfer equation as a phase imaging method has become an effective microscopy method that does not require the use of high-resolution optical systems and information about the object. The construction of a mathematical model in Python, linking the properties of a coherent lighting source and the features of the detector movement, will allow us to investigate the uniqueness of the solution to the inverse problem (phase problem) and create an effective numerical algorithm for processing the radiation transmitted or reflected by the object.
 ## General class infrastructure
 ![shares](https://user-images.githubusercontent.com/54303323/111208557-f46c4380-85db-11eb-88c3-da4169aea3c0.jpg)
 ## Logic
