@@ -14,3 +14,4 @@ scikit-image==0.18.1
 scipy==1.6.0
 six==1.15.0
 tifffile==2020.9.3
+icecream~=2.1.0
