@@ -1,6 +1,6 @@
 # TIE <br/>
-## Infrastructure
-![shares](https://user-images.githubusercontent.com/54303323/107850640-f6908600-6e14-11eb-91df-6cce3970cef8.jpg)
+## General class infrastructure
+![shares](https://user-images.githubusercontent.com/54303323/111208557-f46c4380-85db-11eb-88c3-da4169aea3c0.jpg)
 ## Logic
 ![shares](https://user-images.githubusercontent.com/54303323/107850653-06a86580-6e15-11eb-8910-3854b2d798df.jpg)
 ## Technologies 
