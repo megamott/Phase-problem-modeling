@@ -13,7 +13,7 @@ In recent years, the intensity transfer equation as a phase imaging method has b
 - matplotlib==3.3.4
 - networkx==2.5
 - numpy==1.20.1
-- Pillow==8.1.0
+- Pillow==8.1.1
 - pyparsing==2.4.7
 - python-dateutil==2.8.1
 - PyWavelets==1.1.1
