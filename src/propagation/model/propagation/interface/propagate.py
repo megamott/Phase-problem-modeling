@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
 
-# интерфейс объекта, способного распространяться в пространстве
 class Propagable(ABC):
+    """ Интерфейс объекта, способного распространяться в пространстве """
 
     @abstractmethod
-    def propagate_on_distance(self, z: float, method):
+    def propagate_on_distance(self, z: float, method, **kwargs):
         """
         Возвращает распространившуюся в пространстве на дистанцию z (преобразованную) волну
         :param method: конкретный метод распространения волны

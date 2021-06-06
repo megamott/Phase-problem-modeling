@@ -1,49 +1,51 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from typing import Tuple
+
 import numpy as np
 
-from ...areas.interface.aperture import Aperture
-from ...areas.interface.area import Area
+from ...areas.aperture import Aperture
+from ...areas.grid import CartesianGrid
 from ...propagation.interface.propagate import Propagable
 
 
-class Wave(Propagable):
+class Wave(Propagable, ABC):
     """
     Интерфейс волны
     """
 
     @abstractmethod
-    def get_wrapped_phase(self, aperture=None) -> np.ndarray:
+    def get_wrapped_phase(self, *, aperture: Aperture = None, z: float = None) -> np.ndarray:
         """
         Возвращает неразвернутую фазу волны
         :param aperture: апертура (circ) для обрезания поля
         :rtype: Aperture
+        :param z: дистанция, на которую распространилась волна из начала координат
         :return: матрица значений фаз
         """
         pass
 
     @abstractmethod
-    def get_unwrapped_phase(self, aperture=None) -> np.ndarray:
+    def get_unwrapped_phase(self, *, aperture: Aperture = None, z: float = None) -> Tuple[np.ndarray, Aperture]:
         """
         Возвращает развернутую фазу волны
         :param aperture: апертура (circ) для обрезания поля
-        :rtype: Aperture
+        :param z: дистанция, на которую распространилась волна из начала координат
         :return: матрица значений фаз
         """
         pass
 
     @abstractmethod
-    def get_wavefront_radius(self, aperture: Aperture) -> float:
+    def get_wavefront_radius(self, aperture: Aperture, z: float) -> float:
         """
         Возвращает радиус волнового фронта, найденный по следующей формуле:
         r = (s / 2) + (l ** 2 / (8 * s))
         s - стрелка прогиба
         l - хорда, являющаяся диаметром апертуры
         :param aperture: апертура (circ) для обрезания поля
-        :rtype: Aperture
+        :param z: дистанция, на которую распространилась волна из начала координат
         :return: радиус волнового фронта при заданной обрезающей апертуре
         """
-
-    pass
+        pass
 
     @property
     @abstractmethod
@@ -60,15 +62,15 @@ class Wave(Propagable):
 
     @property
     @abstractmethod
-    def area(self) -> Area:
+    def grid(self) -> CartesianGrid:
         """
         Координатная сетка
         """
         pass
 
-    @area.setter
+    @grid.setter
     @abstractmethod
-    def area(self, area):
+    def grid(self, area):
         pass
 
     @property
@@ -141,13 +143,4 @@ class Wave(Propagable):
     @gaussian_width_param.setter
     @abstractmethod
     def gaussian_width_param(self, gaussian_width_param):
-        pass
-
-    @property
-    @abstractmethod
-    def distance(self) -> float:
-        """
-        Расстояние распространения волны
-        :return:
-        """
         pass
